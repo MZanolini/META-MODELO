@@ -1,0 +1,197 @@
+# tbox-local.ttl -- Extensoes locais de vocabulario (Camada 2.5 e bridges),
+# Recorte 1: apenas os termos usados pelos 16 shapes ja validados em shapes.ttl.
+# Extraido de Arquitetura_Ontologica_Empresarial_v1_3.docx.
+#
+# ESCOPO: isto NAO inclui gist nem ArchiMate 3.2 (ontologias externas publicadas --
+# ver nota de pendencia no Mapa de Gap, item "Repositorio de ontologia"). Contem
+# apenas as extensoes org:/ref:/demo:/vsm: definidas pelo proprio documento.
+#
+# METODO: mesmas duas correcoes mecanicas do shapes.ttl (link markdown -> URI,
+# restauracao de quebra de linha comentario/statement). Zero anomalias na
+# correcao de URI neste recorte.
+#
+# LACUNA DE CONTEUDO ENCONTRADA (nao mecanica -- nao resolvida aqui, ver nota
+# no final do arquivo): org:ManagementDimension e usado em dezenas de lugares
+# do documento (SPARQL, sh:in, exemplos) mas sua declaracao formal como
+# owl:Class com owl:oneOf nunca aparece no texto-fonte. Nao inventei essa
+# declaracao. Fica pendente de decisao do consultor.
+#
+# status: rascunho de extracao, recorte 1 de N. Nao valida contra dados reais.
+
+@prefix owl:        <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:       <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:        <http://www.w3.org/2001/XMLSchema#> .
+@prefix archimate:  <http://www.opengroup.org/xsd/archimate/3.2/> .
+@prefix org:        <https://example.org/ontology/> .
+@prefix demo:       <https://example.org/demo/> .
+@prefix vsm:        <https://example.org/vsm/> .
+@prefix gist:       <https://ontologies.semanticarts.com/gist/> .
+@prefix ref:        <https://example.org/ref/> .
+
+### Bridge DEMO -- Secao 6
+
+# Propriedade-ponte: BusinessProcess realiza padrão DEMO .
+demo:realizesCoordinationPattern a owl:ObjectProperty ; rdfs:domain archimate:BusinessProcess ; rdfs:range demo:Transaction ; rdfs:label "realiza padrão de coordenação"@pt . 
+# Classe DEMO Transaction com suas fases canônicas .
+demo:Transaction a owl:Class ; rdfs:label "DEMO Transaction"@en, "Transação DEMO"@pt ; rdfs:comment "Padrão de coordenação performativa em cinco atos: request, promise, execute, state, accept."@pt .
+demo:hasPhase a owl:ObjectProperty ; rdfs:domain demo:Transaction ; rdfs:range demo:TransactionPhase .
+demo:TransactionPhase a owl:Class ; owl:equivalentClass [ a owl:Class ; owl:oneOf ( demo:Request demo:Promise demo:Execute demo:State demo:Accept ) ] . 
+# Axioma de cobertura: todo BusinessProcess que envolve coordenação # entre dois ou mais atores deve realizar ao menos uma Transaction. 
+# (Esta regra é validada em SHACL — ver §9, Shape 07.)
+
+### Bridge VSM -- Secao 7
+
+# Classe enumerada de funções VSM .
+vsm:VSMFunction a owl:Class ; rdfs:label "Função VSM"@pt ; owl:equivalentClass [ a owl:Class ; owl:oneOf ( vsm:S1 vsm:S2 vsm:S3 vsm:S3star vsm:S4 vsm:S5 ) ] . vsm:S1 a vsm:VSMFunction ; rdfs:label "S1 — Operação primária"@pt . vsm:S2 a vsm:VSMFunction ; rdfs:label "S2 — Coordenação anti-oscilatória"@pt . vsm:S3 a vsm:VSMFunction ; rdfs:label "S3 — Regulação e sinergia"@pt . vsm:S3star a vsm:VSMFunction ; rdfs:label "S3* — Auditoria esporádica"@pt . vsm:S4 a vsm:VSMFunction ; rdfs:label "S4 — Inteligência e prospecção"@pt . vsm:S5 a vsm:VSMFunction ; rdfs:label "S5 — Política e identidade"@pt . 
+# Propriedade-destino para sinais que contornam coordenação regular # (usada por org:AlgedonicAlert em §7.3 e por Shape 11 em §9) .
+vsm:targetFunction a owl:ObjectProperty ; rdfs:domain gist:Event ; rdfs:range vsm:VSMFunction ; rdfs:label "função VSM de destino"@pt, "VSM target function"@en ; rdfs:comment "Função VSM à qual um sinal organizacional é dirigido — usado canonicamente por AlgedonicAlert, que aponta para S5."@pt . 
+# Propriedade de anotação, domínio restrito a estrutura ativa ou comportamento .
+vsm:vsmFunction a owl:ObjectProperty ; rdfs:domain [ a owl:Class ; owl:unionOf ( archimate:BusinessActor archimate:BusinessRole archimate:BusinessCollaboration archimate:BusinessFunction archimate:BusinessProcess archimate:Capability ) ] ; rdfs:range vsm:VSMFunction .
+
+### AlgedonicAlert -- Secao 7.3
+
+org:AlgedonicAlert a owl:Class ; rdfs:subClassOf gist:Event ; rdfs:label "Alerta algedônico"@pt ; rdfs:comment "Sinal de urgência que contorna canais regulares de coordenação"@pt . 
+# Todo AlgedonicAlert tem como destino canônico S5 (Identidade) . org:AlgedonicAlert rdfs:subClassOf [ a owl:Restriction ; owl:onProperty vsm:targetFunction ; owl:hasValue vsm:S5 ] .
+
+### KPI / Intervention (base) -- area pre-Secao 8
+
+ref:KPI a owl:Class ; rdfs:subClassOf gist:Magnitude ; rdfs:label "Indicador-chave de Desempenho"@pt .
+ref:BSCPerspective a owl:Class ; owl:equivalentClass [ a owl:Class ; owl:oneOf ( ref:Financial ref:Customer ref:InternalProcess ref:LearningGrowth ) ] .
+ref:measuresCapability a owl:ObjectProperty ; rdfs:domain ref:KPI ; rdfs:range archimate:Capability .
+ref:hasBSCPerspective a owl:ObjectProperty ; rdfs:domain ref:KPI ; rdfs:range ref:BSCPerspective .
+ref:hasThreshold a owl:ObjectProperty ; rdfs:domain ref:KPI ; rdfs:range ref:Threshold .
+ref:Threshold a owl:Class ; rdfs:label "Faixa de Tolerância"@pt .
+ref:greenUpperBound a owl:DatatypeProperty ; rdfs:range xsd:decimal .
+ref:yellowUpperBound a owl:DatatypeProperty ; rdfs:range xsd:decimal . 
+# acima de yellow → vermelho → dispara org:AlgedonicAlert (ver §7.3) # Intervenção com ROI rastreável
+ref:Intervention a owl:Class ; rdfs:subClassOf gist:Project ; rdfs:label "Intervenção Consultiva"@pt .
+ref:appliesFramework a owl:ObjectProperty ; rdfs:domain ref:Intervention ; rdfs:range ref:ManagementFramework .
+ref:targetsCapability a owl:ObjectProperty ; rdfs:domain ref:Intervention ; rdfs:range archimate:Capability .
+ref:investmentCost a owl:DatatypeProperty ; rdfs:domain ref:Intervention ; rdfs:range xsd:decimal .
+ref:realizedReturn a owl:DatatypeProperty ; rdfs:domain ref:Intervention ; rdfs:range xsd:decimal .
+
+### Competencia Humana (vocabulario) -- Secao 8.9.1
+
+ref:Competence a owl:Class ; rdfs:label "Competencia Humana"@pt ; rdfs:comment "Habilidade requerida por uma pessoa para executar microatividades e compor capabilities organizacionais."@pt . 
+# Tres subclasses CHA ref:TechnicalCompetence rdfs:subClassOf ref:Competence ; rdfs:label "Competencia Tecnica (Conhecimento aplicado)"@pt . ref:BehavioralCompetence rdfs:subClassOf ref:Competence ; rdfs:label "Competencia Comportamental (Atitude)"@pt . ref:ManagerialCompetence rdfs:subClassOf ref:Competence ; rdfs:label "Competencia Gerencial (Habilidade integradora)"@pt . 
+# Competencia tem ancoragem dimensional
+ref:anchoredInDimension a owl:ObjectProperty ; rdfs:domain ref:Competence ; rdfs:range org:ManagementDimension . 
+# Capability requer competencias (matriz ponderada)
+org:capabilityRequiresCompetence a owl:ObjectProperty ; rdfs:domain archimate:Capability ; rdfs:range ref:Competence .
+org:competenceWeight a owl:DatatypeProperty ; rdfs:range xsd:decimal ; rdfs:comment "Peso (0-100) da competencia na composicao da capability; soma por capability = 100."@pt .
+
+### Papeis de Mudanca -- Secao 8.12.2
+
+ref:ChangeSponsor a owl:Class ;
+    rdfs:subClassOf archimate:BusinessRole ;
+    rdfs:label "Patrocinador de Mudança"@pt ;
+    rdfs:comment "Papel executivo com autoridade formal e capital político para autorizar, financiar e remover obstáculos à Intervention."@pt .
+ref:ChangeAgent a owl:Class ;
+    rdfs:subClassOf archimate:BusinessRole ;
+    rdfs:label "Agente de Mudança"@pt ;
+    rdfs:comment "Papel operacional responsável por planejar e executar atividades de mudança no perímetro da Intervention."@pt .
+ref:ChangeEndUser a owl:Class ;
+    rdfs:subClassOf archimate:BusinessRole ;
+    rdfs:label "Usuário Final da Mudança"@pt ;
+    rdfs:comment "Papel cujo comportamento ou processo é alterado pela Intervention."@pt .
+ref:ChangeResistor a owl:Class ;
+    rdfs:subClassOf archimate:BusinessRole ;
+    rdfs:label "Papel Resistente à Mudança"@pt ;
+    rdfs:comment "Papel identificado como fonte de resistência. Atribuição é diagnóstica — informa estratégia de engajamento — e refere-se a papéis, não a indivíduos nomeados (§8.12.1)."@pt .
+
+### Status e Ciclo de Intervention -- Secao 8.12.3
+
+ref:InterventionStatus a owl:Class ;
+    rdfs:label "Status de Intervention"@pt ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:oneOf ( ref:Proposed ref:Approved ref:InProgress ref:Concluded ref:Cancelled )
+    ] .
+ref:Proposed   a ref:InterventionStatus ; rdfs:label "Proposta"@pt .
+ref:Approved   a ref:InterventionStatus ; rdfs:label "Aprovada (não iniciada)"@pt .
+ref:InProgress a ref:InterventionStatus ; rdfs:label "Em execução"@pt .
+ref:Concluded  a ref:InterventionStatus ; rdfs:label "Concluída (ROI realizado declarável)"@pt .
+ref:Cancelled  a ref:InterventionStatus ; rdfs:label "Cancelada"@pt .
+ref:interventionStatus a owl:ObjectProperty ;
+    rdfs:domain ref:Intervention ;
+    rdfs:range  ref:InterventionStatus .
+
+### Avaliacao de Prontidao -- Secao 8.12.5
+
+ref:ChangeReadinessAssessment a owl:Class ;
+    rdfs:label "Avaliação de Prontidão para Mudança"@pt ;
+    rdfs:comment "Snapshot de readiness organizacional para uma Intervention, com estrutura definida pela metodologia adotada."@pt .
+ref:byMethodology a owl:ObjectProperty ;
+    rdfs:domain ref:ChangeReadinessAssessment ;
+    rdfs:range  ref:ManagementFramework ;
+    rdfs:comment "Metodologia de mudança que define as fases avaliadas neste assessment (ex: mgmt:ADKAR)."@pt .
+ref:assessmentScope a owl:ObjectProperty ;
+    rdfs:domain ref:ChangeReadinessAssessment ;
+    rdfs:range  archimate:Capability ;
+    rdfs:comment "Capability-alvo cuja Intervention este assessment habilita."@pt .
+ref:assessedAt a owl:DatatypeProperty ;
+    rdfs:domain ref:ChangeReadinessAssessment ;
+    rdfs:range  xsd:dateTime .
+ref:assessedBy a owl:ObjectProperty ;
+    rdfs:domain ref:ChangeReadinessAssessment ;
+    rdfs:range  archimate:BusinessRole .
+
+# Score reificado por fase — vocabulário invariante; fases concretas são instâncias curadas
+ref:PhaseScore a owl:Class ;
+    rdfs:label "Score de Fase"@pt ;
+    rdfs:comment "Reificação que liga um Assessment a uma fase específica com seu score numérico."@pt .
+ref:phaseScore a owl:ObjectProperty ;
+    rdfs:domain ref:ChangeReadinessAssessment ;
+    rdfs:range  ref:PhaseScore .
+ref:onPhase a owl:ObjectProperty ;
+    rdfs:domain ref:PhaseScore ;
+    rdfs:range  ref:FrameworkPhase ;
+    rdfs:comment "Fase do framework metodológico (ex: mgmt:ADKAR_Awareness) à qual o score se refere."@pt .
+ref:score a owl:DatatypeProperty ;
+    rdfs:domain ref:PhaseScore ;
+    rdfs:range  xsd:integer ;
+    rdfs:comment "Score numérico atribuído à fase. Escala e critérios definidos pela metodologia da Camada 2.5."@pt .
+
+### Vinculos com Intervention -- Secao 8.12.6
+
+ref:hasSponsor a owl:ObjectProperty ;
+    rdfs:domain ref:Intervention ;
+    rdfs:range  ref:ChangeSponsor ;
+    rdfs:comment "Patrocinador formal da Intervention (cardinalidade >= 1 imposta em §9 Shape 15)."@pt .
+ref:hasChangeAgent a owl:ObjectProperty ;
+    rdfs:domain ref:Intervention ;
+    rdfs:range  ref:ChangeAgent .
+ref:engagesStakeholder a owl:ObjectProperty ;
+    rdfs:domain ref:Intervention ;
+    rdfs:range  archimate:Stakeholder ;
+    rdfs:comment "Stakeholder ArchiMate (camada motivacional) com interesse declarado na Intervention."@pt .
+ref:hasChangeReadiness a owl:ObjectProperty ;
+    rdfs:domain ref:Intervention ;
+    rdfs:range  ref:ChangeReadinessAssessment ;
+    rdfs:comment "Assessment de prontidão habilitador da Intervention. Cardinalidade condicional ao status (§9 Shape 16)."@pt .
+ref:appliesChangeMethodology a owl:ObjectProperty ;
+    rdfs:domain ref:Intervention ;
+    rdfs:range  ref:ManagementFramework ;
+    rdfs:comment "Metodologia de change management adotada. Distinta de ref:appliesFramework, que aponta para o framework de gestão central (ex: DMAIC, OKR)."@pt .
+
+### org:ManagementDimension -- PROVISORIO, decisao do consultor em 2026-07-01
+# Declaracao ausente no texto-fonte (usada em dezenas de lugares, nunca formalizada).
+# Forma abaixo espelha o padrao ja usado por ref:InterventionStatus (Secao 8.12.3) e
+# ref:MaturityLevel (Secao 8.1.1) no proprio documento -- nao e reuso de gist/ArchiMate
+# (checagem contra gist real ainda pendente -- gist.owl nao importado, Passo 5 do
+# roteiro). GATILHO DE REVISAO: quando gist.owl for importado, reconciliar contra
+# qualquer classe de classificacao equivalente antes de tratar como definitivo.
+org:ManagementDimension a owl:Class ;
+    rdfs:label "Dimensão de Gestão"@pt ;
+    rdfs:comment "As seis dimensões gerenciais cruzadas com perspectivas ArchiMate na matriz 6x6 (ver Secao 1)."@pt ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:oneOf ( org:Identidade org:Direcao org:Operacao org:Recursos org:Controle org:Evolucao )
+    ] .
+
+org:Identidade a org:ManagementDimension ; rdfs:label "Identidade"@pt .
+org:Direcao    a org:ManagementDimension ; rdfs:label "Direção"@pt .
+org:Operacao   a org:ManagementDimension ; rdfs:label "Operação"@pt .
+org:Recursos   a org:ManagementDimension ; rdfs:label "Recursos"@pt .
+org:Controle   a org:ManagementDimension ; rdfs:label "Controle"@pt .
+org:Evolucao   a org:ManagementDimension ; rdfs:label "Evolução"@pt .
