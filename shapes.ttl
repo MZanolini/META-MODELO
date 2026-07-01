@@ -1,0 +1,141 @@
+# shapes.ttl -- Camada 2.5 / Arquitetura Ontologica Empresarial v1.3
+# Extraido de Arquitetura_Ontologica_Empresarial_v1_3.docx, Secao 9 (Shapes 01-12, 15-16),
+# Secao 8.9.3 (Shape 13) e Secao 8.10.2 (Shape 14).
+#
+# PROVENANCIA E LIMITACOES DA EXTRACAO:
+# - O arquivo-fonte no projeto tem extensao .docx mas e texto piano/markdown, nao OOXML binario.
+# - Shapes 01-12, 13, 14: sofreram dois tipos de corrupcao mecanica na fonte, ambos corrigidos aqui
+#   de forma deterministica (nao houve reformulacao de conteudo semantico):
+#     (a) URIs completas serializadas como link markdown [url](url) -> revertidas para <url>
+#         apenas onde label e target eram identicos (nenhuma anomalia encontrada nas 16 shapes).
+#     (b) Quebras de linha entre comentario "# Shape NN -- ..." e a declaracao Turtle seguinte
+#         foram perdidas na fonte (paragrafo colapsado) -- restauradas via deteccao do padrao
+#         "<texto> <prefixo:Entidade> a sh:NodeShape" colado numa unica linha.
+# - Shapes 15-16: nao sofreram corrupcao -- copiadas verbatim.
+# - Uma ambiguidade NAO mecanica foi encontrada e resolvida com decisao explicita (ver comentario
+#   dentro da Shape 14): um comentario e "sh:severity sh:Info" apareciam colados na fonte, tornando
+#   incerto se seriam uma unica linha comentada (severity ausente) ou duas linhas distintas
+#   (severity presente). Resolvido como duas linhas distintas. Nota: e funcionalmente indiferente --
+#   sh:minCount 0 nunca gera violacao, entao esta property shape nao reporta nada em nenhuma leitura.
+# - status: rascunho de extracao, nao validado pelo consultor. Validado apenas sintaticamente
+#   (pyshacl parse), nao contra dados reais.
+
+@prefix sh:        <http://www.w3.org/ns/shacl#> .
+@prefix archimate:  <http://www.opengroup.org/xsd/archimate/3.2/> .
+@prefix org:        <https://example.org/ontology/> .
+@prefix demo:       <https://example.org/demo/> .
+@prefix vsm:        <https://example.org/vsm/> .
+@prefix gist:       <https://ontologies.semanticarts.com/gist/> .
+@prefix ref:        <https://example.org/ref/> .
+@prefix rdf:        <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+# NOTA: rdf: nao aparece declarado explicitamente na fonte junto a Shape 13, mas e usado
+# (rdf:subject/rdf:predicate/rdf:object em reificacao). E o prefixo padrao W3C fixo -- unica
+# ligacao possivel, nao e uma decisao de projeto. Adicionado aqui, sinalizado por transparencia.
+
+
+### Grupo A-D (Shapes 01-12)
+
+# Shape 01 — Todo BusinessProcess deve estar atribuído a ≥ 1 BusinessRole .
+org:BusinessProcessHasRole a sh:NodeShape ; sh:targetClass archimate:BusinessProcess ; sh:property [ sh:path archimate:assignedTo ; sh:qualifiedValueShape [ sh:class archimate:BusinessRole ] ; sh:qualifiedMinCount 1 ; sh:message "BusinessProcess sem BusinessRole atribuído viola governança."@pt ; sh:severity sh:Violation ] . 
+# Shape 02 — Toda Capability deve ser realizada por ≥ 1 BusinessProcess .
+org:CapabilityIsRealized a sh:NodeShape ; sh:targetClass archimate:Capability ; sh:property [ sh:path [ sh:inversePath archimate:realizes ] ; sh:qualifiedValueShape [ sh:class archimate:BusinessProcess ] ; sh:qualifiedMinCount 1 ; sh:message "Capability declarada mas sem processo que a realize."@pt ; sh:severity sh:Violation ] . 
+# Shape 03 — Toda Goal deve ter ≥ 1 Driver .
+org:GoalHasDriver a sh:NodeShape ; sh:targetClass archimate:Goal ; sh:property [ sh:path [ sh:inversePath archimate:influences ] ; sh:qualifiedValueShape [ sh:class archimate:Driver ] ; sh:qualifiedMinCount 1 ; sh:message "Goal sem Driver identificado: motivação rastreável obrigatória."@pt ; sh:severity sh:Warning ] .
+
+# Shape 04 — Uma instância tem no máximo uma dimensão primária (MECE) .
+org:SingleDimensionShape a sh:NodeShape ; sh:targetSubjectsOf org:primaryDimension ; sh:property [ sh:path org:primaryDimension ; sh:in ( org:Identidade org:Direcao org:Operacao org:Recursos org:Controle org:Evolucao ) ; sh:maxCount 1 ; sh:minCount 1 ; sh:message "Cada elemento gerenciado pertence a exatamente uma dimensão primária."@pt ; sh:severity sh:Violation ] . 
+# Shape 05 — Todo BusinessProcess deve ter dimensão primária declarada .
+org:ProcessHasDimensionShape a sh:NodeShape ; sh:targetClass archimate:BusinessProcess ; sh:property [ sh:path org:primaryDimension ; sh:minCount 1 ; sh:message "BusinessProcess deve declarar dimensão primária para entrar na matriz 6x6."@pt ; sh:severity sh:Violation ] . 
+# Shape 06 — Toda Capability deve ter dimensão primária declarada .
+org:CapabilityHasDimensionShape a sh:NodeShape ; sh:targetClass archimate:Capability ; sh:property [ sh:path org:primaryDimension ; sh:minCount 1 ; sh:severity sh:Violation ] .
+
+# Shape 07 — Todo BusinessProcess que envolve ≥ 2 BusinessActors
+# distintos deve realizar pelo menos uma DEMO Transaction .
+org:MultiActorProcessRealizesTransaction a sh:NodeShape ; sh:targetClass archimate:BusinessProcess ; sh:sparql [ sh:select """ PREFIX archimate: <http://www.opengroup.org/xsd/archimate/3.2/> PREFIX demo: <https://example.org/demo/> SELECT $this WHERE { { SELECT $this (COUNT(DISTINCT ?actor) AS ?n) WHERE { $this archimate:assignedTo ?role . ?actor archimate:assignedTo ?role . } GROUP BY $this } FILTER( ?n >= 2 ) FILTER NOT EXISTS { $this demo:realizesCoordinationPattern ?tx } } """ ; sh:message "Processo multi-ator sem DEMO Transaction declarada."@pt ; sh:severity sh:Warning ] . 
+# Shape 08 — Toda DEMO Transaction deve ter exatamente 5 fases distintas .
+org:TransactionPhaseCardinality a sh:NodeShape ; sh:targetClass demo:Transaction ; sh:property [ sh:path demo:hasPhase ; sh:minCount 5 ; sh:maxCount 5 ; sh:message "Transação DEMO deve ter as 5 fases canônicas."@pt ; sh:severity sh:Violation ] .
+
+# Shape 09 — Toda gist:Organization deve declarar pelo menos um Agreement
+# de governança (estatuto, contrato social, política mestra) .
+org:OrganizationHasGoverningAgreement a sh:NodeShape ; sh:targetClass gist:Organization ; sh:property [ sh:path org:hasGoverningAgreement ; sh:class gist:Agreement ; sh:minCount 1 ; sh:severity sh:Violation ] . 
+# Shape 10 — Todo BusinessRole crítico (anotado vsm:S3 ou superior) # deve ter pelo menos um BusinessActor humano nominado .
+org:CriticalRoleHasOwner a sh:NodeShape ; sh:targetClass archimate:BusinessRole ; sh:sparql [ sh:select """ PREFIX vsm: <https://example.org/vsm/> PREFIX archimate: <http://www.opengroup.org/xsd/archimate/3.2/> SELECT $this WHERE { $this vsm:vsmFunction ?fn . FILTER( ?fn IN ( vsm:S3, vsm:S3star, vsm:S4, vsm:S5 ) ) FILTER NOT EXISTS { ?actor a archimate:BusinessActor ; archimate:assignedTo $this } } """ ; sh:severity sh:Violation ] . 
+# Shape 11 — AlgedonicAlert deve ter destino vsm:S5 (correção canônica VSM) .
+org:AlgedonicTargetsS5 a sh:NodeShape ; sh:targetClass org:AlgedonicAlert ; sh:property [ sh:path vsm:targetFunction ; sh:hasValue vsm:S5 ; sh:minCount 1 ; sh:severity sh:Violation ] . 
+# Shape 12 — Toda Constraint deve influenciar (via archimate:influences) # pelo menos um elemento de comportamento (substitui o predicado inválido 'Governs') .
+org:ConstraintInfluencesBehavior a sh:NodeShape ; sh:targetClass archimate:Constraint ; sh:property [ sh:path archimate:influences ; sh:minCount 1 ; sh:severity sh:Warning ] .
+
+### Shape 13 -- Secao 8.9.3
+
+# Shape 13 (v1.2) — Soma de pesos por capability deve ser 100
+ref:CompetenceWeightSumShape a sh:NodeShape ;
+sh:targetClass archimate:Capability ;
+sh:sparql [         sh:select """             SELECT $this (SUM(?w) AS ?total) WHERE {               $this org:capabilityRequiresCompetence ?cmp .               ?stmt rdf:subject $this ;                     rdf:predicate org:capabilityRequiresCompetence ;                     rdf:object ?cmp ;                     org:competenceWeight ?w .             } GROUP BY $this HAVING ( SUM(?w) != 100 )         """ ;
+sh:message "Soma de pesos de competencias de capability deve ser 100."@pt ;
+sh:severity sh:Violation     ] .
+
+### Shape 14 -- Secao 8.10.2
+
+# Shape 14 (v1.2) — Toda Capability declarada deve ter o tripe completo (warning)
+ref:CapabilityTripodShape a sh:NodeShape ;
+sh:targetClass archimate:Capability ;
+sh:property [         sh:path ref:realizedByProcess ;
+sh:minCount 1 ;
+sh:message "Capability sem processo realizador — gap potencial em DIM-3."@pt ;
+sh:severity sh:Warning     ] ;
+sh:property [         sh:path ref:executedByRole ;
+sh:minCount 1 ;
+sh:message "Capability sem papel responsavel — gap potencial em DIM-4 (pessoas)."@pt ;
+sh:severity sh:Warning     ] ;
+sh:property [         sh:path ref:enabledByComponent ;
+sh:minCount 0 ;
+# RESOLVIDO (ambiguidade de formatacao no documento-fonte, ver nota no cabecalho do arquivo):
+    # opcional para capability sem componente tecnologico
+    sh:severity sh:Info
+] .
+
+### Shape 15 -- Secao 9.2.1
+
+# Shape 15 (v1.3) — Toda Intervention deve declarar pelo menos um Sponsor.
+ref:InterventionSponsorShape a sh:NodeShape ;
+    sh:targetClass ref:Intervention ;
+    sh:property [
+        sh:path ref:hasSponsor ;
+        sh:qualifiedValueShape [ sh:class ref:ChangeSponsor ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:message "Intervention sem ChangeSponsor declarado viola governança de mudança."@pt ;
+        sh:severity sh:Violation
+    ] .
+
+### Shape 16 -- Secao 9.2.2
+
+# Shape 16 (v1.3) — ChangeReadinessAssessment é obrigatório em fases avançadas.
+# Uso de SHACL Advanced Features (sh:sparql) para condicional sobre status.
+ref:InterventionReadinessShape a sh:NodeShape ;
+    sh:targetClass ref:Intervention ;
+    # Sub-restrição A: Violation se InProgress/Concluded sem readiness
+    sh:sparql [
+        sh:select """
+            PREFIX ref: <https://example.org/ref/>
+            SELECT $this WHERE {
+              $this ref:interventionStatus ?status .
+              FILTER( ?status IN ( ref:InProgress, ref:Concluded ) )
+              FILTER NOT EXISTS { $this ref:hasChangeReadiness ?cra }
+            }
+        """ ;
+        sh:message "Intervention em execução ou concluída sem ChangeReadinessAssessment vinculado — assessment é pré-requisito de transição para InProgress."@pt ;
+        sh:severity sh:Violation
+    ] ;
+    # Sub-restrição B: Warning se Proposed/Approved sem readiness
+    sh:sparql [
+        sh:select """
+            PREFIX ref: <https://example.org/ref/>
+            SELECT $this WHERE {
+              $this ref:interventionStatus ?status .
+              FILTER( ?status IN ( ref:Proposed, ref:Approved ) )
+              FILTER NOT EXISTS { $this ref:hasChangeReadiness ?cra }
+            }
+        """ ;
+        sh:message "Intervention sem ChangeReadinessAssessment — aceitável em Proposed/Approved, mas obrigatório antes de transitar para InProgress (Shape 16 escalará para Violation)."@pt ;
+        sh:severity sh:Warning
+    ] .
