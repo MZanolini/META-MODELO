@@ -27,6 +27,10 @@
 @prefix vsm:        <https://example.org/vsm/> .
 @prefix gist:       <https://ontologies.semanticarts.com/gist/> .
 @prefix ref:        <https://example.org/ref/> .
+@prefix skos:       <http://www.w3.org/2004/02/skos/core#> .
+@prefix mgmt:       <https://example.org/mgmt/> .
+@prefix pcf:        <https://example.org/pcf/> .
+@prefix naics:      <https://example.org/naics/> .
 
 ### Bridge DEMO -- Secao 6
 
@@ -195,3 +199,341 @@ org:Operacao   a org:ManagementDimension ; rdfs:label "Operação"@pt .
 org:Recursos   a org:ManagementDimension ; rdfs:label "Recursos"@pt .
 org:Controle   a org:ManagementDimension ; rdfs:label "Controle"@pt .
 org:Evolucao   a org:ManagementDimension ; rdfs:label "Evolução"@pt .
+
+### ============================================================
+### RECORTE 2 — Mesclado em 2026-07-01
+### Adicionado ao tbox-local.ttl (previamente commit 820974d).
+### Vocabulário pcf:, naics:, mgmt:, e ref:Microactivity/FrameworkPhase.
+### Fonte: Arquitetura_Ontologica_Empresarial_v1_3 §8.3/§8.4/§8.7/§8.11/§8.12.8.
+### PROVISÓRIOS INCLUÍDOS: mgmt:LeanSixSigma, mgmt:OKR (ver nota 5 do bloco).
+### Cabeçalho original do recorte 2 preservado abaixo — contém decisões de escopo.
+### ============================================================
+
+# ============================================================
+# tbox-recorte2-additions.ttl
+# Adições ao TBox local — Recorte 2: vocabulário pcf:, naics:,
+# mgmt:, e Microactivity/FrameworkPhase.
+#
+# Fonte: Arquitetura_Ontologica_Empresarial_v1_3.docx
+#   §8.3.2-8.3.3  mgmt: catálogo de frameworks (classe abstrata,
+#                 6 subclasses por natureza, Domain, instâncias)
+#   §8.4          pcf: taxonomia PCF/APQC (classes + propriedades)
+#   §8.7          naics: classificação setorial (classe + propriedades)
+#   §8.11.1       Microactivity / FrameworkPhase (vocabulário)
+#   §8.12.8       mgmt: catálogo — metodologias de mudança (ADKAR,
+#                 Kotter8Steps, ScheinCultureModel + fases ADKAR)
+#
+# Extraído por: Claude (sessão de chat), 2026-07-01.
+# Status: NÃO commitado. Pendente de reposicionamento e
+#   revalidação independente pelo Cowork antes de commit no
+#   repositório real (mesmo fluxo do recorte 1 — ver
+#   Handoff_Curadoria_Camada25_v0_1.md).
+# Alvo de merge: destina-se a ser ANEXADO ao tbox-local.ttl
+#   existente (commit 820974d), não é um arquivo standalone
+#   novo — usa os mesmos prefixos ref:/org:/gist:/archimate:.
+#
+# DECISÕES DE ESCOPO DESTA EXTRAÇÃO (não são decisão do
+# consultor — registradas aqui para revisão, revisáveis):
+#
+# 1. EXCLUÍDO — instâncias de exemplo em pcf:/naics:
+#    (pcf:n_11_0, pcf:n_11_1, pcf:n_11_1_1_1_1 de §8.4;
+#    naics:522110, naics:336111 de §8.7). São dado de catálogo
+#    externo (ABox de referência), não vocabulário (TBox).
+#    Migram junto da curadoria de conteúdo real (Frente D).
+#    Nota lateral: naics:522110 é rotulado "Commercial Banking"
+#    no texto-fonte — setor regulado, fora do posicionamento do
+#    consultor. Como o exemplo não foi extraído, isso não afeta
+#    este arquivo; fica como observação para quando a Arquitetura
+#    for revisada (Frente A).
+#
+# 2. EXCLUÍDO — exemplo de Microactivity de §8.11.2
+#    (ref:atv_020_F1_01, mgmt:DMAIC_F1_Define usado com
+#    ref:realizesCapability apontando para data:cap_reducao_variacao
+#    e data:cmp_six_sigma_dmaic). Referencia data: — é ABox de
+#    tenant, não vocabulário.
+#
+# 3. INCLUÍDO — mgmt:DMAIC_F1_Define (ao contrário do item 2,
+#    só a declaração da fase, sem o exemplo de Microactivity
+#    associado). É instância de catálogo mgmt: (ref:FrameworkPhase),
+#    mesmo padrão que mgmt:ADKAR_Awareness etc. — o próprio
+#    texto-fonte (§8.12.8) chama isso de "padrão idêntico".
+#    Fases F2-F5 do DMAIC (Measure/Analyze/Improve/Control) NÃO
+#    existem como instâncias no texto-fonte v1.3 — não foram
+#    inventadas aqui. Gap de curadoria futura.
+#
+# 4. EXCLUÍDO — as 3 regras de roteamento semântico de §8.8.2
+#    (ref:RR_VariabilityToDMAIC, ref:RR_AdaptabilityToScrum,
+#    ref:RR_StrategyGapToOKR — sh:NodeShape com SPARQL). Não são
+#    vocabulário; são regras executáveis. Não fazem parte da
+#    contagem oficial de 16 shapes de §9 (essas vieram do recorte
+#    1). Candidato a recorte futuro separado.
+#
+# 5. PROVISÓRIO — mgmt:LeanSixSigma e mgmt:OKR. Usados
+#    repetidamente no texto-fonte (§8.5, §8.8.2, §8.12.6, §8.12.9,
+#    §11.7, glossário §15) mas NUNCA declarados formalmente —
+#    ambiguidade genuína, não corrupção mecânica (mesmo padrão do
+#    precedente org:ManagementDimension no recorte 1). Declarados
+#    abaixo como ref:Methodology por decisão explícita do
+#    consultor (2026-07-01), por analogia ao uso idêntico de
+#    mgmt:DMAIC/mgmt:Scrum nas regras de roteamento (excluídas
+#    por este arquivo, ver item 4, mas presentes no texto-fonte).
+#    GATILHO DE REVISÃO: quando a Metodologia consultiva formalizar
+#    o catálogo real desses frameworks (Frente C) — reconciliar ou
+#    promover a definitivo.
+#
+# 6. DEPENDÊNCIAS EXTERNAS NÃO DECLARADAS NESTE ARQUIVO — referenciadas
+#    via rdfs:domain/range mas fora do escopo nomeado deste recorte:
+#    archimate:Capability, archimate:BusinessProcess, gist:Organization
+#    (já importados por gist/ArchiMate); org:ManagementDimension e
+#    seus indivíduos org:Operacao/org:Controle/org:Direcao/org:Evolucao
+#    (recorte 1, provisório); ref:MaturityLevel e seus indivíduos
+#    ref:Initial/ref:Repeatable/ref:Defined (§8.1.1, não extraído em
+#    nenhum recorte até agora); ref:GapType e seus indivíduos
+#    ref:HighVariability/ref:LowAdaptability/ref:StrategyExecutionGap
+#    (§8.8.1, não extraído); ref:Competence (§8.9.1, não extraído);
+#    ref:Artifact (§8.5, não extraído). Este arquivo NÃO é
+#    standalone-completo — pyshacl/rdflib vão parsear sem erro
+#    (URIs não resolvidas não quebram Turtle), mas qualquer
+#    reasoning ou SHACL que dependa dessas classes precisa dos
+#    recortes correspondentes.
+# ============================================================
+
+
+# ------------------------------------------------------------
+# §8.3.2 — Catálogo de Frameworks de Gestão
+# ------------------------------------------------------------
+
+ref:ManagementFramework a owl:Class ;
+    rdfs:subClassOf gist:Specification ;
+    rdfs:label "Framework de Gestao (abstrato)"@pt .
+
+ref:ManagementSystem    rdfs:subClassOf ref:ManagementFramework .
+ref:Methodology         rdfs:subClassOf ref:ManagementFramework .
+ref:Technique           rdfs:subClassOf ref:ManagementFramework .
+ref:Standard            rdfs:subClassOf ref:ManagementFramework .
+ref:ConceptualModel     rdfs:subClassOf ref:ManagementFramework .
+ref:AnalyticalFramework rdfs:subClassOf ref:ManagementFramework .
+
+ref:applicableDomain a owl:ObjectProperty ;
+    rdfs:domain ref:ManagementFramework ;
+    rdfs:range ref:Domain .
+
+ref:Lean       a ref:Domain ; rdfs:label "Lean / Eficiencia operacional"@pt .
+ref:Quality    a ref:Domain ; rdfs:label "Qualidade"@pt .
+ref:Agile      a ref:Domain ; rdfs:label "Agilidade / Iteracao"@pt .
+ref:Strategic  a ref:Domain ; rdfs:label "Estrategia"@pt .
+ref:Governance a ref:Domain ; rdfs:label "Governanca"@pt .
+ref:Operations a ref:Domain ; rdfs:label "Operacoes"@pt .
+ref:People     a ref:Domain ; rdfs:label "Pessoas e Cultura"@pt .
+ref:Finance    a ref:Domain ; rdfs:label "Financas"@pt .
+
+# Propriedades de aplicabilidade (mantidas da v1.1).
+# Ranges abaixo apontam para classes fora do escopo deste recorte
+# — ver nota 6 do cabeçalho.
+ref:addressesGapType rdfs:domain ref:ManagementFramework ;
+    rdfs:range ref:GapType .
+
+ref:applicableInDimension rdfs:domain ref:ManagementFramework ;
+    rdfs:range org:ManagementDimension .
+
+ref:requiresMinimumMaturity rdfs:domain ref:ManagementFramework ;
+    rdfs:range ref:MaturityLevel .
+
+ref:decomposesIntoPCFNode rdfs:domain ref:ManagementFramework ;
+    rdfs:range pcf:PCFNode .
+
+# ------------------------------------------------------------
+# §8.4 — PCF/APQC como Taxonomia de Referência
+# Licenciamento: PCF distribuído pela APQC sob CC-BY 4.0,
+# atribuição requerida em qualquer interface que renderize
+# identificadores PCF. Validação jurídica do uso comercial
+# permanece pendente (fora do escopo desta extração).
+# ------------------------------------------------------------
+
+pcf:PCFNode a owl:Class ;
+    rdfs:label "Nó PCF (qualquer nível)"@pt .
+
+pcf:ProcessCategory rdfs:subClassOf pcf:PCFNode ;
+    rdfs:label "Categoria (Nível 1)"@pt .
+
+pcf:ProcessGroup rdfs:subClassOf pcf:PCFNode ;
+    rdfs:label "Grupo de Processos (Nível 2)"@pt .
+
+pcf:Process rdfs:subClassOf pcf:PCFNode ;
+    rdfs:label "Processo (Nível 3)"@pt .
+
+pcf:Activity rdfs:subClassOf pcf:PCFNode ;
+    rdfs:label "Atividade (Nível 4)"@pt .
+
+pcf:Task rdfs:subClassOf pcf:PCFNode ;
+    rdfs:label "Tarefa (Nível 5)"@pt .
+
+pcf:identifier a owl:DatatypeProperty ;
+    rdfs:domain pcf:PCFNode ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Identificador APQC dotted (ex: '11.1.1.1.1')"@pt .
+
+pcf:apqcCode a owl:DatatypeProperty ;
+    rdfs:domain pcf:PCFNode ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Código APQC entre parênteses (ex: '23023')"@pt .
+
+pcf:parentNode a owl:ObjectProperty ;
+    rdfs:domain pcf:PCFNode ;
+    rdfs:range pcf:PCFNode .
+
+# Ponte com ArchiMate — tenant declara que seu processo realiza um nó PCF
+org:realizesPCFNode a owl:ObjectProperty ;
+    rdfs:domain archimate:BusinessProcess ;
+    rdfs:range pcf:PCFNode .
+
+# ------------------------------------------------------------
+# §8.7 — Multi-tenancy e Classificação Setorial (NAICS)
+# ------------------------------------------------------------
+
+naics:Industry a owl:Class ;
+    rdfs:subClassOf skos:Concept ;
+    rdfs:label "Setor Industrial NAICS"@pt .
+
+naics:naicsCode a owl:DatatypeProperty ;
+    rdfs:domain naics:Industry ;
+    rdfs:range xsd:string .
+
+org:industryCode a owl:ObjectProperty ;
+    rdfs:domain gist:Organization ;
+    rdfs:range naics:Industry .
+
+# ------------------------------------------------------------
+# §8.11.1 — Microactivity / FrameworkPhase
+# ------------------------------------------------------------
+
+ref:Microactivity a owl:Class ;
+    rdfs:subClassOf gist:Specification ;
+    rdfs:label "Microatividade"@pt ;
+    rdfs:comment "Acao executavel de literatura framework, granularidade abaixo de pcf:Task."@pt .
+
+ref:FrameworkPhase a owl:Class ;
+    rdfs:label "Fase de Framework"@pt ;
+    rdfs:comment "Subdivisao temporal de um framework (ex: Define/Measure/Analyze/Improve/Control do DMAIC)."@pt .
+
+ref:phaseOfFramework a owl:ObjectProperty ;
+    rdfs:domain ref:FrameworkPhase ;
+    rdfs:range ref:ManagementFramework .
+
+ref:partOfFrameworkPhase a owl:ObjectProperty ;
+    rdfs:domain ref:Microactivity ;
+    rdfs:range ref:FrameworkPhase .
+
+ref:realizesCapability a owl:ObjectProperty ;
+    rdfs:domain ref:Microactivity ;
+    rdfs:range archimate:Capability .
+
+ref:involvesEntity a owl:ObjectProperty ;
+    rdfs:domain ref:Microactivity .
+
+ref:producesAnalyticalObject a owl:ObjectProperty ;
+    rdfs:domain ref:Microactivity .
+
+ref:requiresCompetence a owl:ObjectProperty ;
+    rdfs:domain ref:Microactivity ;
+    rdfs:range ref:Competence .
+
+ref:instrumentedByArtifact a owl:ObjectProperty ;
+    rdfs:domain ref:Microactivity ;
+    rdfs:range ref:Artifact .
+
+ref:bibliographicSource a owl:DatatypeProperty ;
+    rdfs:domain ref:Microactivity ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Fonte literatura/manual de origem (ex: 'ASQ DMAIC Body of Knowledge')."@pt .
+
+# ------------------------------------------------------------
+# §8.3.3 + §8.12.8 — Catálogo mgmt: (instâncias de framework)
+# mgmt: não contém classes — só indivíduos nomeados das classes
+# ref: declaradas acima. Herança múltipla é permitida e ocorre
+# (ex: mgmt:ISO9001, mgmt:TOC).
+# ------------------------------------------------------------
+
+mgmt:DMAIC a ref:Methodology ;
+    rdfs:label "DMAIC — Define, Measure, Analyze, Improve, Control"@pt ;
+    ref:applicableDomain ref:Quality, ref:Operations ;
+    ref:addressesGapType ref:HighVariability ;
+    ref:applicableInDimension org:Operacao, org:Controle ;
+    ref:requiresMinimumMaturity ref:Repeatable .
+
+mgmt:ISO9001 a ref:Standard, ref:ManagementSystem ;
+    rdfs:label "ISO 9001 — Sistemas de Gestao da Qualidade"@pt ;
+    ref:applicableDomain ref:Quality, ref:Governance ;
+    ref:requiresMinimumMaturity ref:Defined .
+
+mgmt:Porter5Forces a ref:AnalyticalFramework ;
+    rdfs:label "Cinco Forcas de Porter"@pt ;
+    ref:applicableDomain ref:Strategic ;
+    ref:applicableInDimension org:Direcao ;
+    ref:requiresMinimumMaturity ref:Initial .
+
+mgmt:TOC a ref:ConceptualModel, ref:ManagementSystem ;
+    rdfs:label "Theory of Constraints (Goldratt)"@pt ;
+    ref:applicableDomain ref:Operations ;
+    ref:applicableInDimension org:Operacao .
+
+mgmt:Scrum a ref:Methodology ;
+    rdfs:label "Scrum"@pt ;
+    ref:applicableDomain ref:Agile ;
+    ref:addressesGapType ref:LowAdaptability ;
+    ref:applicableInDimension org:Evolucao, org:Operacao .
+
+mgmt:ADKAR a ref:Methodology ;
+    rdfs:label "ADKAR — Awareness, Desire, Knowledge, Ability, Reinforcement"@pt ;
+    ref:applicableDomain ref:People ;
+    ref:addressesGapType ref:StrategyExecutionGap ;
+    ref:requiresMinimumMaturity ref:Initial .
+
+mgmt:Kotter8Steps a ref:Methodology ;
+    rdfs:label "Oito Passos de Kotter para Liderar Mudança"@pt ;
+    ref:applicableDomain ref:People, ref:Strategic ;
+    ref:requiresMinimumMaturity ref:Repeatable .
+
+mgmt:ScheinCultureModel a ref:ConceptualModel ;
+    rdfs:label "Modelo de Cultura Organizacional (Schein)"@pt ;
+    ref:applicableDomain ref:People ;
+    rdfs:comment "Lente diagnóstica de pressupostos básicos, valores expostos e artefatos visíveis."@pt .
+
+# Fases (ref:FrameworkPhase) do catálogo mgmt:
+
+mgmt:DMAIC_F1_Define a ref:FrameworkPhase ;
+    rdfs:label "DMAIC F1 — Define"@pt ;
+    ref:phaseOfFramework mgmt:DMAIC .
+# Fases F2-F5 (Measure/Analyze/Improve/Control) NÃO existem como
+# instâncias no texto-fonte v1.3 — gap de curadoria futura, não
+# inventado aqui.
+
+mgmt:ADKAR_Awareness a ref:FrameworkPhase ;
+    rdfs:label "ADKAR — Awareness (Consciência)"@pt ;
+    ref:phaseOfFramework mgmt:ADKAR .
+
+mgmt:ADKAR_Desire a ref:FrameworkPhase ;
+    rdfs:label "ADKAR — Desire (Desejo)"@pt ;
+    ref:phaseOfFramework mgmt:ADKAR .
+
+mgmt:ADKAR_Knowledge a ref:FrameworkPhase ;
+    rdfs:label "ADKAR — Knowledge (Conhecimento)"@pt ;
+    ref:phaseOfFramework mgmt:ADKAR .
+
+mgmt:ADKAR_Ability a ref:FrameworkPhase ;
+    rdfs:label "ADKAR — Ability (Habilidade)"@pt ;
+    ref:phaseOfFramework mgmt:ADKAR .
+
+mgmt:ADKAR_Reinforcement a ref:FrameworkPhase ;
+    rdfs:label "ADKAR — Reinforcement (Reforço)"@pt ;
+    ref:phaseOfFramework mgmt:ADKAR .
+
+# --- PROVISÓRIO — ver nota 5 do cabeçalho. Decisão do consultor,
+# 2026-07-01: declarar como ref:Methodology. Gatilho de revisão:
+# formalização do catálogo pela Metodologia consultiva (Frente C).
+
+mgmt:LeanSixSigma a ref:Methodology ;
+    rdfs:label "Lean Six Sigma"@pt .
+
+mgmt:OKR a ref:Methodology ;
+    rdfs:label "OKR — Objectives and Key Results"@pt .
