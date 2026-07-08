@@ -537,3 +537,94 @@ mgmt:LeanSixSigma a ref:Methodology ;
 
 mgmt:OKR a ref:Methodology ;
     rdfs:label "OKR — Objectives and Key Results"@pt .
+
+### ============================================================
+### RECORTE 3 — Mesclado em 2026-07-08
+### Adicionado ao tbox-local.ttl (previamente commit d5eaa13).
+### Vocabulário ref:MaturityLevel (§8.1.1), ref:GapType (§8.8.1),
+### ref:Artifact (§8.5). Fonte: Arquitetura_Ontologica_Empresarial_v1_3.
+###
+### NOTA DE ESCOPO — §8.9.1 (ref:Competence) NÃO consta deste bloco:
+### já foi extraído no Recorte 1 (linhas 77-85, commit 820974d).
+### "Reuso > criação": não redeclarado aqui. CORREÇÃO DE REGISTRO: a linha
+### do checklist do Registro e a nota 6 do cabeçalho do Recorte 2 marcavam
+### §8.9.1 como "não extraído" — impreciso; estava presente desde Recorte 1.
+### Labels de §8.9.1 no Recorte 1 estão SEM acento; normalização acentuada
+### decidida pelo consultor fica pendente de relabel (não aplicada a conteúdo
+### já commitado sem confirmação explícita) — ver Registro §1.
+###
+### PENDÊNCIA (a) — ref:ReferenceCapability: §8.1.1 declara
+### org:targetMaturityLevel com rdfs:domain ref:ReferenceCapability, classe
+### cuja definição completa é de §8.2 (Recorte 3 ou 4, em aberto no Registro).
+### Opção adotada = (i) stub mínimo owl:Class + comment. Opção (ii) =
+### referência implícita sem declarar a classe. Decisão na validação (Registro §1).
+###
+### PONTO (b) — ref:Methodology × ref:ManagementFramework: relação JÁ
+### declarada (ref:Methodology rdfs:subClassOf ref:ManagementFramework,
+### bloco Recorte 2). Logo mgmt:LeanSixSigma/mgmt:OKR (ref:Methodology) são
+### transitivamente ref:ManagementFramework e o range de ref:partOfFramework
+### (§8.5) é satisfeito. Sem inconsistência a corrigir.
+### ============================================================
+
+# ------------------------------------------------------------
+# §8.1.1 — Escala canônica de Maturidade (5 níveis)
+# ------------------------------------------------------------
+ref:MaturityLevel a owl:Class ;
+    rdfs:label "Nível de Maturidade"@pt ;
+    owl:equivalentClass [ a owl:Class ; owl:oneOf ( ref:Initial ref:Repeatable ref:Defined ref:Managed ref:Optimized ) ] .
+ref:Initial    a ref:MaturityLevel ; ref:levelOrder 1 ; rdfs:label "1 — Inicial (reativo, caótico)"@pt .
+ref:Repeatable a ref:MaturityLevel ; ref:levelOrder 2 ; rdfs:label "2 — Repetível (sucesso depende de heróis)"@pt .
+ref:Defined    a ref:MaturityLevel ; ref:levelOrder 3 ; rdfs:label "3 — Definido (padronizado e documentado)"@pt .
+ref:Managed    a ref:MaturityLevel ; ref:levelOrder 4 ; rdfs:label "4 — Gerenciado (medido quantitativamente)"@pt .
+ref:Optimized  a ref:MaturityLevel ; ref:levelOrder 5 ; rdfs:label "5 — Otimizado (melhoria contínua)"@pt .
+ref:levelOrder a owl:DatatypeProperty ; rdfs:domain ref:MaturityLevel ; rdfs:range xsd:integer .
+
+org:hasMaturityLevel a owl:ObjectProperty ;
+    rdfs:domain [ a owl:Class ; owl:unionOf ( archimate:Capability archimate:BusinessProcess archimate:BusinessFunction ) ] ;
+    rdfs:range ref:MaturityLevel ;
+    rdfs:comment "Maturidade observada (as-is)"@pt .
+
+# Stub mínimo — ver PENDÊNCIA (a) no cabeçalho deste bloco.
+ref:ReferenceCapability a owl:Class ;
+    rdfs:comment "definição completa pendente — ver Registro de Pendências §1 e Arquitetura §8.2 (Recorte 3 ou 4)"@pt .
+org:targetMaturityLevel a owl:ObjectProperty ;
+    rdfs:domain ref:ReferenceCapability ;
+    rdfs:range ref:MaturityLevel ;
+    rdfs:comment "Maturidade desejada para o nível-alvo da referência (to-be)"@pt .
+
+# ------------------------------------------------------------
+# §8.8.1 — Tipos de Gap Diagnosticado (7 subtipos)
+# ------------------------------------------------------------
+ref:GapType a owl:Class ; rdfs:label "Tipo de Gap Diagnosticado"@pt .
+ref:HighVariability      a ref:GapType ; rdfs:label "Variabilidade alta"@pt .
+ref:LongLeadTime         a ref:GapType ; rdfs:label "Lead time excessivo"@pt .
+ref:LowAdaptability      a ref:GapType ; rdfs:label "Baixa adaptabilidade ao ambiente"@pt .
+ref:StrategyExecutionGap a ref:GapType ; rdfs:label "Estratégia não-executada"@pt .
+ref:ControlFailure       a ref:GapType ; rdfs:label "Falha de controle / risco materializado"@pt .
+ref:SupplyDemandMismatch a ref:GapType ; rdfs:label "Descoordenação supply × demand"@pt .
+ref:KnowledgeAttrition   a ref:GapType ; rdfs:label "Perda de conhecimento crítico"@pt .
+org:gapType a owl:ObjectProperty ;
+    rdfs:domain archimate:Capability ;
+    rdfs:range ref:GapType ;
+    rdfs:comment "Diagnóstico atribuído à capability do tenant após análise as-is"@pt .
+
+# ------------------------------------------------------------
+# §8.5 — Biblioteca de Artefatos (10 subclasses)
+# ------------------------------------------------------------
+ref:Artifact a owl:Class ;
+    rdfs:subClassOf gist:Specification ;
+    rdfs:label "Artefato Consultivo"@pt .
+ref:FMEAWorksheet  rdfs:subClassOf ref:Artifact .
+ref:CTQTree        rdfs:subClassOf ref:Artifact .
+ref:SIPOCDiagram   rdfs:subClassOf ref:Artifact .
+ref:ValueStreamMap rdfs:subClassOf ref:Artifact .
+ref:RACIMatrix     rdfs:subClassOf ref:Artifact .
+ref:OKRSheet       rdfs:subClassOf ref:Artifact .
+ref:BSCDashboard   rdfs:subClassOf ref:Artifact .
+ref:CanvasBMC      rdfs:subClassOf ref:Artifact .
+ref:DMAICTemplate  rdfs:subClassOf ref:Artifact .
+ref:RiskHeatmap    rdfs:subClassOf ref:Artifact .
+ref:instrumentsTask a owl:ObjectProperty ; rdfs:domain ref:Artifact ; rdfs:range pcf:PCFNode .
+ref:templateURL     a owl:DatatypeProperty ; rdfs:domain ref:Artifact ; rdfs:range xsd:anyURI .
+ref:partOfFramework a owl:ObjectProperty ; rdfs:domain ref:Artifact ; rdfs:range ref:ManagementFramework .
+### FIM DO RECORTE 3 ###
