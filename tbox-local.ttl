@@ -559,7 +559,7 @@ mgmt:OKR a ref:Methodology ;
 ### Opção adotada = (i) stub mínimo owl:Class + comment. Opção (ii) =
 ### referência implícita sem declarar a classe. Decisão na validação (Registro §1).
 ###
-### RESOLVIDO NO RECORTE 4 (commit <COMMIT_R4>): definição completa de
+### RESOLVIDO NO RECORTE 4 (commit f09dc6a): definição completa de
 ### ref:ReferenceCapability adicionada, ver bloco §8.2 abaixo.
 ###
 ### PONTO (b) — ref:Methodology × ref:ManagementFramework: relação JÁ
