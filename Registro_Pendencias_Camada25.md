@@ -28,13 +28,16 @@ feito, para não precisar reler handoffs inteiros a cada sessão.
 | 3 | `naics:522110` (exemplo "Commercial Banking" em Arquitetura §8.2) usado como exemplo de setor regulado, fora do posicionamento do consultor | Observação de conteúdo, não decidida | Recorte 2, achado ao extrair `naics:` | Não migrado para o TBox — nota registrada no bloco `### RECORTE 2 ###` de `tbox-local.ttl`, commit `d5eaa13` | Decidir na próxima revisão da Arquitetura (Frente A): manter como exemplo de sintaxe, trocar por setor não-regulado, ou anotar explicitamente como "exemplo, não recomendação de posicionamento" | Aberto |
 | 5 | Labels de §8.9.1 (`ref:Competence` + 3 subclasses CHA) estão **sem acento** ("Competencia Humana", "Competencia Tecnica"…), divergindo de §8.1.1/§8.8.1 e do bloco de referência acentuado | Divergência de fonte + decisão de normalização (ponto do Recorte 3) | Recorte 1 (`820974d`); reconfirmado no Recorte 3 | `tbox-local.ttl`, linhas 79-80 | Você decidiu "normalizar acentuado" — mas o bloco já está **commitado** desde o Recorte 1; o relabel **não** foi aplicado a conteúdo commitado sem confirmação explícita | Aberto — aguarda seu OK para relabel acentuado das linhas 79-80 (mudança T1, sem impacto em SHACL, que é baseado em URI, não em label) |
 | 6 | `ref:applicableIndustry` (§8.2) e `ref:applicableSector` (§8.2.1) têm `rdfs:domain`/`rdfs:range` idênticos (`ref:ReferenceCapability` → `naics:Industry`) | Observação de conteúdo, não decidida | Recorte 4, achado ao extrair §8.2/§8.2.1 | `tbox-local.ttl`: propriedades no bloco `### RECORTE 3 ###` (§8.2/§8.2.1) e nota no bloco `### RECORTE 4 ###`, commit `f09dc6a` | Decidir na próxima revisão da Arquitetura/curadoria (Frente A): a fonte só diz que `applicableSector` é "mais granular", sem detalhar a distinção — manter as duas, fundir, ou especializar o range de uma delas | Aberto — extraídas exatamente como na fonte, sem fundir, renomear ou inventar diferenciação (mesmo tratamento do item 3) |
+| 7 | Escopo de §8.8.2 (regras de roteamento semântico, SHACL+SPARQL) | Decisão provisória | Decidida por você em 2026-07-20, fora de sessão de extração | Não extraída — conteúdo permanece só na Arquitetura v1.3 §8.8.2, não migrado para shapes.ttl | Revisitar quando a Frente C convergir DMAIC/VSM (primeiro piloto planejado); o mapeamento gap→framework deve nascer validado contra metodologia real, não contra os 3 exemplos ilustrativos do documento | Aberto — decisão de adiar tomada; extração condicionada à convergência da Frente C |
 
-Cinco linhas. Três herdadas (1-3); o item 5 (acento de §8.9.1, Recorte 3)
-segue aberto; o item 6 (`applicableIndustry` × `applicableSector`) é novo do
-Recorte 4. O antigo item 4 (stub de `ReferenceCapability`) foi **resolvido**
-pelo Recorte 4 — a definição completa de §8.2 substituiu o stub — e por isso
-foi removido da tabela ("cada linha some quando resolvida"). Continua sendo
-dívida semântica pequena e rastreável.
+Seis linhas (1, 2, 3, 5, 6, 7). Três herdadas (1-3); o item 5 (acento de
+§8.9.1, Recorte 3) segue aberto; o item 6 (`applicableIndustry` ×
+`applicableSector`) veio do Recorte 4; o item 7 (escopo de §8.8.2) é a decisão
+de 2026-07-20 de adiar as regras de roteamento para a Frente C. O antigo item 4
+(stub de `ReferenceCapability`) foi **resolvido** pelo Recorte 4 — a definição
+completa de §8.2 substituiu o stub — e por isso foi removido da tabela ("cada
+linha some quando resolvida"). Continua sendo dívida semântica pequena e
+rastreável.
 
 ---
 
@@ -51,7 +54,7 @@ posso agrupar diferente se fizer mais sentido ao chegar lá.
 | `MaturityLevel`, `GapType`, `Artifact` | §8.1.1, §8.8.1, §8.5 | ✅ Commitado — hash `52f701749dae12345c4dc0301e0ef0835f1fa460` (`52f7017`), bloco `### RECORTE 3 — Mesclado em 2026-07-08 ###` em `tbox-local.ttl` (429 → 522 triplas). rdflib parse OK; pyshacl `advanced=True` Conforms. **`Competence` (§8.9.1) NÃO fez parte deste recorte — já estava no Recorte 1** (correção da linha anterior deste checklist, que a marcava como não-extraída). | Recorte 3 — concluído em 2026-07-08 |
 | `ReferenceCapability` completa + propriedades que apontam para `pcf:`/`naics:` | §8.2, §8.2.1 | ✅ Extraído — commit `f09dc6a`, substituiu o **stub** do Recorte 3 no próprio bloco `### RECORTE 3 ###`; inclui `applicableIndustry`, `realizedByReferenceProcess`, `org:hasReferenceCapability`, `applicableSector` e as 4 subclasses setoriais (Manufatura Discreta, Serviços Profissionais, Distribuição/Atacado, Varejo). Exemplo `ref:cap_RiscoOperacionalBancario` (naics:522110) **não** migrado — ver Seção 1, item 3. | Recorte 4 — concluído em 2026-07-20 |
 | Restante do vocabulário de mudança organizacional (papéis, status, fatores de resistência, readiness) | §8.12 (menos §8.12.8, já feito) | ✅ Extraído — commit `f09dc6a`. Auditoria de §8.12 concluída: §8.12.2 (papéis Change*), §8.12.3 (`InterventionStatus`), §8.12.5/§8.12.6 (vínculos com `Intervention`) já estavam no Recorte 1 e §8.12.8 no Recorte 2; o Recorte 4 acrescentou §8.12.4 (`ResistanceFactor` + 5 subclasses + 3 propriedades, reusando `ref:ChangeResistor` e `ref:Intervention`) e §8.12.7 (5 subclasses de `ref:Artifact`). **§8.12 completo.** | Recorte 4 — concluído em 2026-07-20 |
-| Regras de roteamento semântico (SHACL+SPARQL) | §8.8.2 | ⬜ Escopo a confirmar — não é vocabulário no sentido estrito; decidir se entra como recorte de "regras" separado de TBox | Fora de sequência — decisão pendente sobre se entra na Frente A |
+| Regras de roteamento semântico (SHACL+SPARQL) | §8.8.2 | 🔲 Decidido: fora do escopo da Frente A por ora — ver Registro §1, item 7 | Adiado para a Frente C (convergência DMAIC/VSM) |
 
 **⚠️ Nota de exatidão do checklist:** o Recorte 3 revelou que este checklist
 (e a nota 6 do cabeçalho do Recorte 2) marcava §8.9.1 `ref:Competence` como
@@ -60,16 +63,13 @@ Recomenda-se, no checkpoint de reconciliação, uma auditoria linha-a-linha do
 que de fato está em `tbox-local.ttl` versus o que o checklist afirma — o
 mesmo tipo de descompasso pode existir na linha de §8.12.
 
-**Leitura direta:** com o Recorte 4 mesclado, o vocabulário do TBox da Frente A
-está **tecnicamente completo**. A definição completa de `ref:ReferenceCapability`
-(§8.2/§8.2.1) e o restante de §8.12 (§8.12.4 fatores de resistência e §8.12.7
-artefatos de mudança) foram extraídos e validados (rdflib: 522 → 588 triplas;
-pyshacl `advanced=True` Conforms: True). Resta **apenas uma decisão de escopo**,
-sobre as regras de roteamento semântico de §8.8.2 (SHACL+SPARQL): se entram como
-recorte de "regras" separado ou ficam fora do TBox formal. Essa decisão é do
-consultor e **não foi tomada aqui** (está explicitamente fora do escopo do
-Recorte 4). Depois de resolvida, a Frente A vai para o checkpoint de
-reconciliação da Seção 3 antes de iniciar a Frente C.
+**Leitura direta:** com a decisão de escopo de §8.8.2 tomada em 2026-07-20
+(adiar para a Frente C, ver Registro §1 item 7), a Frente A está **completa** —
+todo o vocabulário TBox foi extraído e validado (rdflib + pyshacl `advanced=True`
+Conforms em todos os recortes), e a única questão de escopo em aberto foi
+decidida: não é mais pendência sem resposta, é decisão registrada com gatilho de
+revisão nomeado. A Frente A está pronta para o checkpoint de reconciliação da
+Seção 3.
 
 ---
 
