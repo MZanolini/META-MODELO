@@ -559,6 +559,9 @@ mgmt:OKR a ref:Methodology ;
 ### Opção adotada = (i) stub mínimo owl:Class + comment. Opção (ii) =
 ### referência implícita sem declarar a classe. Decisão na validação (Registro §1).
 ###
+### RESOLVIDO NO RECORTE 4 (commit <COMMIT_R4>): definição completa de
+### ref:ReferenceCapability adicionada, ver bloco §8.2 abaixo.
+###
 ### PONTO (b) — ref:Methodology × ref:ManagementFramework: relação JÁ
 ### declarada (ref:Methodology rdfs:subClassOf ref:ManagementFramework,
 ### bloco Recorte 2). Logo mgmt:LeanSixSigma/mgmt:OKR (ref:Methodology) são
@@ -584,9 +587,35 @@ org:hasMaturityLevel a owl:ObjectProperty ;
     rdfs:range ref:MaturityLevel ;
     rdfs:comment "Maturidade observada (as-is)"@pt .
 
-# Stub mínimo — ver PENDÊNCIA (a) no cabeçalho deste bloco.
+# §8.2 — Definição completa de ReferenceCapability
+# (substitui o stub mínimo do Recorte 3; ver nota "RESOLVIDO NO RECORTE 4" acima).
 ref:ReferenceCapability a owl:Class ;
-    rdfs:comment "definição completa pendente — ver Registro de Pendências §1 e Arquitetura §8.2 (Recorte 3 ou 4)"@pt .
+    rdfs:subClassOf archimate:Capability ;
+    rdfs:label "Capability de Referência"@pt ;
+    rdfs:comment "Capacidade-padrão curada para um setor e nível-alvo de maturidade"@pt .
+ref:applicableIndustry a owl:ObjectProperty ;
+    rdfs:domain ref:ReferenceCapability ;
+    rdfs:range naics:Industry .
+ref:realizedByReferenceProcess a owl:ObjectProperty ;
+    rdfs:domain ref:ReferenceCapability ;
+    rdfs:range pcf:Process ;
+    rdfs:comment "Processos PCF que realizam canonicamente esta capability"@pt .
+org:hasReferenceCapability a owl:ObjectProperty ;
+    rdfs:domain archimate:Capability ;
+    rdfs:range ref:ReferenceCapability .
+# §8.2.1 — Subclasses setoriais
+ref:DiscreteManufacturingCapability rdfs:subClassOf ref:ReferenceCapability ;
+    rdfs:label "Capability de Referência — Manufatura Discreta"@pt ;
+    rdfs:comment "Setor inicial de curadoria; foco em middle market industrial brasileiro."@pt .
+ref:ProfessionalServicesCapability rdfs:subClassOf ref:ReferenceCapability ;
+    rdfs:label "Capability de Referência — Serviços Profissionais"@pt .
+ref:DistributionWholesaleCapability rdfs:subClassOf ref:ReferenceCapability ;
+    rdfs:label "Capability de Referência — Distribuição/Atacado"@pt .
+ref:RetailCapability rdfs:subClassOf ref:ReferenceCapability ;
+    rdfs:label "Capability de Referência — Varejo"@pt .
+ref:applicableSector a owl:ObjectProperty ;
+    rdfs:domain ref:ReferenceCapability ;
+    rdfs:range naics:Industry .
 org:targetMaturityLevel a owl:ObjectProperty ;
     rdfs:domain ref:ReferenceCapability ;
     rdfs:range ref:MaturityLevel ;
@@ -628,3 +657,61 @@ ref:instrumentsTask a owl:ObjectProperty ; rdfs:domain ref:Artifact ; rdfs:range
 ref:templateURL     a owl:DatatypeProperty ; rdfs:domain ref:Artifact ; rdfs:range xsd:anyURI .
 ref:partOfFramework a owl:ObjectProperty ; rdfs:domain ref:Artifact ; rdfs:range ref:ManagementFramework .
 ### FIM DO RECORTE 3 ###
+
+### ============================================================
+### RECORTE 4 — Mesclado em 2026-07-20
+### Base: commit 52f7017 (Recorte 3). Fonte: Arquitetura_Ontologica_Empresarial_v1_3.
+### §8.12.4 (ref:ResistanceFactor + 5 subclasses + 3 propriedades) e
+### §8.12.7 (5 subclasses de ref:Artifact para artefatos de mudança).
+###
+### NOTA DE REUSO ("reuso > criação"):
+### - ref:ChangeResistor (§8.12.2, domain de exhibitsResistance) e
+###   ref:Intervention (§8.12.3/§8.12.6, range de affectsIntervention) já foram
+###   extraídos no Recorte 1 — NÃO redeclarados aqui.
+### - ref:Artifact (§8.5) já foi extraído no Recorte 3 — as 5 subclasses de
+###   §8.12.7 apenas herdam dele, sem propriedades novas.
+###
+### OBSERVAÇÃO DE CONTEÚDO (novo item no Registro §1, não decidida):
+### ref:applicableIndustry (§8.2) e ref:applicableSector (§8.2.1) têm domain e
+### range idênticos (ref:ReferenceCapability → naics:Industry). A fonte só
+### diferencia dizendo que o segundo é "mais granular", sem detalhar. Extraídas
+### as duas exatamente como estão, sem fundir nem renomear.
+###
+### A definição completa de §8.2 + §8.2.1 (ref:ReferenceCapability) foi aplicada
+### NO LUGAR do stub, dentro do bloco RECORTE 3 acima — não neste bloco.
+### ============================================================
+
+# ------------------------------------------------------------
+# §8.12.4 — Fatores de Resistência à Mudança
+# ------------------------------------------------------------
+ref:ResistanceFactor a owl:Class ;
+    rdfs:label "Fator de Resistência à Mudança"@pt .
+ref:CulturalResistance a owl:Class ; rdfs:subClassOf ref:ResistanceFactor ;
+    rdfs:label "Resistência Cultural"@pt ;
+    rdfs:comment "Pressupostos básicos compartilhados (Schein) que conflitam com a mudança."@pt .
+ref:PoliticalResistance a owl:Class ; rdfs:subClassOf ref:ResistanceFactor ;
+    rdfs:label "Resistência Política"@pt ;
+    rdfs:comment "Perda percebida de poder, território, autonomia ou orçamento."@pt .
+ref:CognitiveResistance a owl:Class ; rdfs:subClassOf ref:ResistanceFactor ;
+    rdfs:label "Resistência Cognitiva"@pt ;
+    rdfs:comment "Não-entendimento do racional, modelo mental incompatível, ceticismo informacional."@pt .
+ref:EmotionalResistance a owl:Class ; rdfs:subClassOf ref:ResistanceFactor ;
+    rdfs:label "Resistência Emocional"@pt ;
+    rdfs:comment "Medo de incompetência, perda de identidade profissional, ansiedade."@pt .
+ref:CapacityResistance a owl:Class ; rdfs:subClassOf ref:ResistanceFactor ;
+    rdfs:label "Resistência por Capacidade"@pt ;
+    rdfs:comment "Falta concreta de tempo, recurso ou habilidade — diferente de falta de vontade."@pt .
+ref:exhibitsResistance a owl:ObjectProperty ; rdfs:domain ref:ChangeResistor ; rdfs:range ref:ResistanceFactor .
+ref:affectsIntervention a owl:ObjectProperty ; rdfs:domain ref:ResistanceFactor ; rdfs:range ref:Intervention .
+ref:resistanceSeverity a owl:DatatypeProperty ; rdfs:domain ref:ResistanceFactor ; rdfs:range xsd:integer ;
+    rdfs:comment "Severidade estimada (1-5). Escala invariante; critérios de avaliação curados pela Metodologia."@pt .
+
+# ------------------------------------------------------------
+# §8.12.7 — Artefatos de Mudança Organizacional (herdam de ref:Artifact §8.5)
+# ------------------------------------------------------------
+ref:CommunicationPlan    rdfs:subClassOf ref:Artifact ; rdfs:label "Plano de Comunicação de Mudança"@pt .
+ref:StakeholderMap       rdfs:subClassOf ref:Artifact ; rdfs:label "Mapa de Stakeholders (poder x interesse)"@pt .
+ref:SponsorshipChecklist rdfs:subClassOf ref:Artifact ; rdfs:label "Checklist de Patrocínio Executivo"@pt .
+ref:ResistanceLog        rdfs:subClassOf ref:Artifact ; rdfs:label "Registro de Resistências e Respostas"@pt .
+ref:ChangeTrainingPlan   rdfs:subClassOf ref:Artifact ; rdfs:label "Plano de Capacitação para a Mudança"@pt .
+### FIM DO RECORTE 4 ###
