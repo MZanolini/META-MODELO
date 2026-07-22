@@ -55,7 +55,8 @@ vsm:vsmFunction a owl:ObjectProperty ; rdfs:domain [ a owl:Class ; owl:unionOf (
 ### AlgedonicAlert -- Secao 7.3
 
 org:AlgedonicAlert a owl:Class ; rdfs:subClassOf gist:Event ; rdfs:label "Alerta algedônico"@pt ; rdfs:comment "Sinal de urgência que contorna canais regulares de coordenação"@pt . 
-# Todo AlgedonicAlert tem como destino canônico S5 (Identidade) . org:AlgedonicAlert rdfs:subClassOf [ a owl:Restriction ; owl:onProperty vsm:targetFunction ; owl:hasValue vsm:S5 ] .
+# Todo AlgedonicAlert tem como destino canônico S5 (Identidade) .
+org:AlgedonicAlert rdfs:subClassOf [ a owl:Restriction ; owl:onProperty vsm:targetFunction ; owl:hasValue vsm:S5 ] .
 
 ### KPI / Intervention (base) -- area pre-Secao 8
 
@@ -76,8 +77,11 @@ ref:realizedReturn a owl:DatatypeProperty ; rdfs:domain ref:Intervention ; rdfs:
 
 ### Competencia Humana (vocabulario) -- Secao 8.9.1
 
-ref:Competence a owl:Class ; rdfs:label "Competencia Humana"@pt ; rdfs:comment "Habilidade requerida por uma pessoa para executar microatividades e compor capabilities organizacionais."@pt . 
-# Tres subclasses CHA ref:TechnicalCompetence rdfs:subClassOf ref:Competence ; rdfs:label "Competencia Tecnica (Conhecimento aplicado)"@pt . ref:BehavioralCompetence rdfs:subClassOf ref:Competence ; rdfs:label "Competencia Comportamental (Atitude)"@pt . ref:ManagerialCompetence rdfs:subClassOf ref:Competence ; rdfs:label "Competencia Gerencial (Habilidade integradora)"@pt . 
+ref:Competence a owl:Class ; rdfs:label "Competência Humana"@pt ; rdfs:comment "Habilidade requerida por uma pessoa para executar microatividades e compor capabilities organizacionais."@pt . 
+# Tres subclasses CHA
+ref:TechnicalCompetence rdfs:subClassOf ref:Competence ; rdfs:label "Competência Técnica (Conhecimento aplicado)"@pt .
+ref:BehavioralCompetence rdfs:subClassOf ref:Competence ; rdfs:label "Competência Comportamental (Atitude)"@pt .
+ref:ManagerialCompetence rdfs:subClassOf ref:Competence ; rdfs:label "Competência Gerencial (Habilidade integradora)"@pt . 
 # Competencia tem ancoragem dimensional
 ref:anchoredInDimension a owl:ObjectProperty ; rdfs:domain ref:Competence ; rdfs:range org:ManagementDimension . 
 # Capability requer competencias (matriz ponderada)

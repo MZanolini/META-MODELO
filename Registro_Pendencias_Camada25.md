@@ -27,13 +27,9 @@ feito, para não precisar reler handoffs inteiros a cada sessão.
 | 2 | `mgmt:LeanSixSigma` + `mgmt:OKR` declarados `ref:Methodology` | Decisão provisória | Recorte 2, decidido por você em 2026-07-01 | `tbox-local.ttl`, commit `d5eaa13` (bloco `### RECORTE 2 ###`) | Reconciliar quando a Metodologia consultiva formalizar o catálogo real de frameworks (Frente C) | Aberto — **este é o ponto de abertura natural da agenda da Frente C**, o gatilho é literalmente o início dela |
 | 6 | `ref:applicableIndustry` (§8.2) e `ref:applicableSector` (§8.2.1) têm `rdfs:domain`/`rdfs:range` idênticos (`ref:ReferenceCapability` → `naics:Industry`) | Decisão provisória | Recorte 4, achado ao extrair §8.2/§8.2.1; decidido no checkpoint de reconciliação em 2026-07-20 | `tbox-local.ttl`, bloco `### RECORTE 3 ###` (propriedades) | Revisitar quando um setor além de Manufatura Discreta for curado e o uso real mostrar se a distinção de granularidade é necessária | Aberto — decisão: manter as duas por ora, sem fundir ou especializar range |
 | 7 | Escopo de §8.8.2 (regras de roteamento semântico, SHACL+SPARQL) | Decisão provisória | Decidida por você em 2026-07-20, fora de sessão de extração | Não extraída — conteúdo permanece só na Arquitetura v1.3 §8.8.2, não migrado para shapes.ttl | Revisitar quando a Frente C convergir DMAIC/VSM (primeiro piloto planejado); o mapeamento gap→framework deve nascer validado contra metodologia real, não contra os 3 exemplos ilustrativos do documento | Aberto — decisão de adiar tomada; extração condicionada à convergência da Frente C |
+| 8 | Cobertura de alinhamento rdfs:subClassOf a gist:/archimate: das classes ref:/mgmt:/pcf: da Camada 2.5, resíduo de 5 classes estruturais sem ancoragem (ref:Competence, ref:FrameworkPhase, ref:Threshold, ref:ChangeReadinessAssessment, ref:ResistanceFactor) | Observação estrutural, sem julgamento pendente hoje | Revisão de par, 2026-07-21, auditoria mecânica em 2026-07-22 (auditoria_checkpoint_2026-07-22.md, Parte 2) | tbox-local.ttl no HEAD do commit [PENDENTE], resíduo declarado, não novo trabalho | Próxima vez que qualquer uma das 5 for substantivamente tocada em curadoria, ou importação real do gist.owl (mesmo gatilho do item 1) | Aberto, resíduo declarado |
 
-Quatro linhas (1, 2, 6, 7). Os itens 3 e 5 foram decididos no checkpoint de
-reconciliação de 2026-07-20 e saem desta seção: a ambiguidade em si está
-resolvida, o que resta é só executar um texto/edição sem julgamento
-pendente, por isso migraram para a Seção 2 (Checklist) como trabalho
-sem ambiguidade. O item 4 (stub de `ReferenceCapability`) segue removido
-desde o Recorte 4. Continua sendo dívida semântica pequena e rastreável.
+Cinco linhas (1, 2, 6, 7, 8). O item 8 nasce da auditoria mecânica de 2026-07-22, que enumerou 56 classes e verificou alinhamento até profundidade 2: 35 alinhadas, sem ação necessária; das 21 não alinhadas, 4 enumerações fechadas seguem o gatilho do item 1, 1 reificação não precisa de ação, a taxonomia pcf: inteira é decisão pragmática documentada, e as 5 classes estruturais acima são o resíduo real.
 
 ---
 
@@ -52,13 +48,9 @@ posso agrupar diferente se fizer mais sentido ao chegar lá.
 | Restante do vocabulário de mudança organizacional (papéis, status, fatores de resistência, readiness) | §8.12 (menos §8.12.8, já feito) | ✅ Extraído — commit `f09dc6a`. §8.12 completo. | Recorte 4 — concluído em 2026-07-20 |
 | Regras de roteamento semântico (SHACL+SPARQL) | §8.8.2 | 🔲 Decidido: fora do escopo da Frente A por ora — ver Registro §1, item 7 | Adiado para a Frente C (convergência DMAIC/VSM) |
 | Anotação em §8.2 da Arquitetura: marcar exemplo `naics:522110` (Bancos Comerciais) como "exemplo de sintaxe, não recomendação de posicionamento" | §8.2 (`Arquitetura_Ontologica_Empresarial_v1_3.docx`, fora do TBox) | ⬜ Não implementado — decisão tomada no checkpoint de 2026-07-20 (ver histórico da Seção 1, ex-item 3) | Próxima revisão da Arquitetura (v1.4) |
-| Revisão ortográfica única de todos os `rdfs:label` do TBox (não só §8.9.1, que motivou o achado) — normalizar acentuação onde divergente | Todo o `tbox-local.ttl` | ⬜ Não implementado — decisão tomada no checkpoint de 2026-07-20: não aplicar patch pontual, fazer como passada única e deliberada (ver histórico da Seção 1, ex-item 5) | Passada de revisão ortográfica dedicada, sem data definida |
+| Revisão ortográfica dos rdfs:label do TBox, passada única e deliberada | Todo o tbox-local.ttl, exceto §8.9.1 (resolvido) | 🟡 Parcialmente executado. §8.9.1 corrigido pelo commit [PENDENTE] em 2026-07-22, como efeito colateral do achado descrito na nota de exatidão acima. Correção mecânica restaurou as três subclasses CHA e aplicou o relabel acentuado (incluindo ref:Competence, linha 79) na mesma passada, exceção estreita e justificada, mesmo bloco, mesmo commit, correção de perda de dado, não abertura de precedente para patch pontual no resto do arquivo. | Passada de revisão ortográfica dedicada, sem data definida, escopo reduzido por não incluir mais §8.9.1 |
 
-**⚠️ Nota de exatidão do checklist:** o Recorte 3 revelou que este checklist
-(e a nota 6 do cabeçalho do Recorte 2) marcava §8.9.1 `ref:Competence` como
-"não extraído", quando ele estava presente desde o Recorte 1. Corrigido. A
-auditoria linha-a-linha do checkpoint de 2026-07-20 não encontrou nenhum
-outro descompasso do mesmo tipo.
+⚠️ Nota de exatidão do checklist: o Recorte 3 revelou que este checklist marcava §8.9.1 ref:Competence como "não extraído", quando ele estava presente desde o Recorte 1. Corrigido. A nota de auditoria do checkpoint de 2026-07-20 registrava não ter encontrado nenhum outro descompasso do mesmo tipo, isso estava incorreto: uma auditoria complementar em 2026-07-22 encontrou dois, a ausência das três subclasses CHA de §8.9.1 (mesmo padrão do achado de Competence) e a perda de uma restrição owl:Restriction sobre org:AlgedonicAlert (§7.3), ambas por corrupção de comentário (statement na mesma linha do #). Os dois foram corrigidos no commit [PENDENTE]. Ver auditoria_checkpoint_2026-07-22.md para evidência bruta.
 
 **Nota de auditoria (checkpoint 2026-07-20):** uma ambiguidade de
 formatação na Shape 14 (`ref:CapabilityTripodShape`, propriedade
@@ -83,3 +75,5 @@ conteúdo real de `tbox-local.ttl` e `shapes.ttl` — contagem de 16 shapes
 confirmada, nenhum outro descompasso do tipo Competence/Recorte 3
 encontrado. Frente A declarada madura o suficiente para iniciar a Frente C,
 com o item 2 da Seção 1 como ponto de abertura natural da agenda.
+
+Nota de 2026-07-22: uma auditoria complementar (revisão de par de 2026-07-21, seguida de auditoria mecânica via Cowork em 2026-07-22, ver auditoria_checkpoint_2026-07-22.md) encontrou dois descompassos que a auditoria de 2026-07-20 não havia identificado (ver nota de exatidão da Seção 2) e levantou uma observação estrutural nova, reaberta como item 8 da Seção 1. Os dois descompassos foram corrigidos no commit [PENDENTE]. Isso não invalida as decisões de conteúdo tomadas em 2026-07-20 (itens 3 e 6), só corrige o registro de completude da auditoria técnica daquele checkpoint.
