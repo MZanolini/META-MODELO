@@ -537,10 +537,54 @@ mgmt:ADKAR_Reinforcement a ref:FrameworkPhase ;
 # formalização do catálogo pela Metodologia consultiva (Frente C).
 
 mgmt:LeanSixSigma a ref:Methodology ;
-    rdfs:label "Lean Six Sigma"@pt .
+    rdfs:label "Lean Six Sigma"@pt ;
+    ref:applicableDomain ref:Lean, ref:Quality, ref:Operations ;
+    ref:applicableInDimension org:Operacao, org:Controle .
 
 mgmt:OKR a ref:Methodology ;
-    rdfs:label "OKR — Objectives and Key Results"@pt .
+    rdfs:label "OKR — Objectives and Key Results"@pt ;
+    ref:applicableDomain ref:Strategic ;
+    ref:applicableInDimension org:Direcao, org:Controle .
+
+mgmt:LeanThinking a ref:Methodology ;
+    rdfs:label "Lean Thinking / Toyota Production System"@pt ;
+    ref:applicableDomain ref:Lean, ref:Operations ;
+    ref:applicableInDimension org:Operacao .
+
+mgmt:EOS a ref:ManagementSystem ;
+    rdfs:label "EOS — Entrepreneurial Operating System"@pt ;
+    ref:applicableDomain ref:Strategic, ref:Governance ;
+    ref:applicableInDimension org:Identidade, org:Direcao .
+
+mgmt:IcebergCompetencia a ref:ConceptualModel ;
+    rdfs:label "Iceberg da Competência do Gestor (McClelland / Spencer & Spencer)"@pt ;
+    ref:applicableDomain ref:People ;
+    ref:applicableInDimension org:Identidade, org:Recursos .
+
+mgmt:LiderancaSituacional a ref:ConceptualModel ;
+    rdfs:label "Liderança Situacional (Hersey & Blanchard)"@pt ;
+    ref:applicableDomain ref:People ;
+    ref:applicableInDimension org:Identidade, org:Recursos .
+
+mgmt:GrowthMindset a ref:ConceptualModel ;
+    rdfs:label "Growth Mindset (Carol Dweck)"@pt ;
+    ref:applicableDomain ref:People ;
+    ref:applicableInDimension org:Identidade, org:Evolucao .
+
+mgmt:WholeBrainModel a ref:ConceptualModel ;
+    rdfs:label "Whole Brain Model (Herrmann)"@pt ;
+    ref:applicableDomain ref:People ;
+    ref:applicableInDimension org:Identidade, org:Recursos .
+
+mgmt:BMM a ref:AnalyticalFramework ;
+    rdfs:label "Business Motivation Model (OMG)"@pt ;
+    ref:applicableDomain ref:Strategic, ref:Governance ;
+    ref:applicableInDimension org:Identidade, org:Direcao .
+
+mgmt:PMVV a ref:Technique ;
+    rdfs:label "Purpose-Mission-Vision-Values (Bain)"@pt ;
+    ref:applicableDomain ref:Strategic, ref:People ;
+    ref:applicableInDimension org:Identidade .
 
 ### ============================================================
 ### RECORTE 3 — Mesclado em 2026-07-08
