@@ -888,3 +888,78 @@ mgmt:PMVV prov:wasGeneratedBy ref:curadoria_chat_2026_07_23_secao1 ;
     prov:wasDerivedFrom ref:source_metamodelo_xlsx ;
     org:confidenceLevel ref:ai_generated_approved .
 ### FIM DO RECORTE 6 ###
+
+### ============================================================
+### RECORTE 7 — Mesclado em 2026-07-23
+### Seção 2 do catálogo de frameworks (Metamodelo.xlsx, FWK-006 a
+### FWK-012). Instâncias nascem com proveniência (§13.5).
+### FWK-006 bundla três autores; decomposta conforme Registro item 11
+### (granularidade fina): Ansoff e Mintzberg entram como instâncias
+### novas, Porter5Forces já existe e não é tocado.
+### FWK-008 (OKR) já curado no Recorte 6.
+### ============================================================
+ref:curadoria_chat_2026_07_23_secao2 a prov:Activity ;
+    rdfs:label "Curadoria em chat — Seção 2 do catálogo de frameworks"@pt ;
+    prov:wasAssociatedWith ref:agent_claude_chat, ref:agent_ontology_steward ;
+    prov:used ref:source_metamodelo_xlsx, ref:source_arq_v1_3_cat_frameworks ;
+    prov:generated mgmt:Ansoff, mgmt:MintzbergStrategySchools, mgmt:BSC,
+                   mgmt:BlueOcean, mgmt:DesignThinking,
+                   mgmt:ScenarioPlanning, mgmt:HoshinKanri .
+mgmt:Ansoff a ref:AnalyticalFramework ;
+    rdfs:label "Matriz de Ansoff"@pt ;
+    ref:applicableDomain ref:Strategic ;
+    ref:applicableInDimension org:Direcao ;
+    prov:wasGeneratedBy ref:curadoria_chat_2026_07_23_secao2 ;
+    prov:generatedAtTime "2026-07-23T00:00:00Z"^^xsd:dateTime ;
+    prov:wasDerivedFrom ref:source_metamodelo_xlsx, ref:source_arq_v1_3_cat_frameworks ;
+    org:confidenceLevel ref:ai_generated_approved .
+mgmt:MintzbergStrategySchools a ref:ConceptualModel, ref:Methodology ;
+    rdfs:label "Escolas de Estratégia e Estratégia Emergente (Mintzberg)"@pt ;
+    rdfs:comment "Dupla natureza confirmada pelo consultor em 2026-07-23: usado tanto como lente descritiva quanto como método de formulação. Padrão de herança múltipla da Arq §8.3.3."@pt ;
+    ref:applicableDomain ref:Strategic ;
+    ref:applicableInDimension org:Direcao ;
+    prov:wasGeneratedBy ref:curadoria_chat_2026_07_23_secao2 ;
+    prov:generatedAtTime "2026-07-23T00:00:00Z"^^xsd:dateTime ;
+    prov:wasDerivedFrom ref:source_metamodelo_xlsx ;
+    org:confidenceLevel ref:ai_generated_approved .
+mgmt:BSC a ref:Methodology ;
+    rdfs:label "Balanced Scorecard (Kaplan & Norton)"@pt ;
+    ref:applicableDomain ref:Strategic, ref:Governance ;
+    ref:applicableInDimension org:Direcao, org:Controle ;
+    prov:wasGeneratedBy ref:curadoria_chat_2026_07_23_secao2 ;
+    prov:generatedAtTime "2026-07-23T00:00:00Z"^^xsd:dateTime ;
+    prov:wasDerivedFrom ref:source_metamodelo_xlsx, ref:source_arq_v1_3_cat_frameworks ;
+    org:confidenceLevel ref:ai_generated_approved .
+mgmt:BlueOcean a ref:AnalyticalFramework ;
+    rdfs:label "Blue Ocean Strategy (Kim & Mauborgne)"@pt ;
+    ref:applicableDomain ref:Strategic ;
+    ref:applicableInDimension org:Direcao, org:Evolucao ;
+    prov:wasGeneratedBy ref:curadoria_chat_2026_07_23_secao2 ;
+    prov:generatedAtTime "2026-07-23T00:00:00Z"^^xsd:dateTime ;
+    prov:wasDerivedFrom ref:source_metamodelo_xlsx, ref:source_arq_v1_3_cat_frameworks ;
+    org:confidenceLevel ref:ai_generated_approved .
+mgmt:DesignThinking a ref:Methodology ;
+    rdfs:label "Design Thinking Estratégico"@pt ;
+    ref:applicableDomain ref:Strategic, ref:Agile ;
+    ref:applicableInDimension org:Direcao, org:Evolucao ;
+    prov:wasGeneratedBy ref:curadoria_chat_2026_07_23_secao2 ;
+    prov:generatedAtTime "2026-07-23T00:00:00Z"^^xsd:dateTime ;
+    prov:wasDerivedFrom ref:source_metamodelo_xlsx ;
+    org:confidenceLevel ref:ai_generated_approved .
+mgmt:ScenarioPlanning a ref:AnalyticalFramework ;
+    rdfs:label "Análise de Cenários e Planejamento por Cenários"@pt ;
+    ref:applicableDomain ref:Strategic ;
+    ref:applicableInDimension org:Direcao, org:Controle ;
+    prov:wasGeneratedBy ref:curadoria_chat_2026_07_23_secao2 ;
+    prov:generatedAtTime "2026-07-23T00:00:00Z"^^xsd:dateTime ;
+    prov:wasDerivedFrom ref:source_metamodelo_xlsx ;
+    org:confidenceLevel ref:ai_generated_approved .
+mgmt:HoshinKanri a ref:Methodology, ref:ManagementSystem ;
+    rdfs:label "GPD / Hoshin Kanri (Método Falconi)"@pt ;
+    ref:applicableDomain ref:Strategic, ref:Operations ;
+    ref:applicableInDimension org:Direcao, org:Operacao ;
+    prov:wasGeneratedBy ref:curadoria_chat_2026_07_23_secao2 ;
+    prov:generatedAtTime "2026-07-23T00:00:00Z"^^xsd:dateTime ;
+    prov:wasDerivedFrom ref:source_metamodelo_xlsx ;
+    org:confidenceLevel ref:ai_generated_approved .
+### FIM DO RECORTE 7 ###
