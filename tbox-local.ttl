@@ -31,6 +31,7 @@
 @prefix mgmt:       <https://example.org/mgmt/> .
 @prefix pcf:        <https://example.org/pcf/> .
 @prefix naics:      <https://example.org/naics/> .
+@prefix prov:       <http://www.w3.org/ns/prov#> .
 
 ### Bridge DEMO -- Secao 6
 
@@ -763,3 +764,50 @@ ref:SponsorshipChecklist rdfs:subClassOf ref:Artifact ; rdfs:label "Checklist de
 ref:ResistanceLog        rdfs:subClassOf ref:Artifact ; rdfs:label "Registro de Resistências e Respostas"@pt .
 ref:ChangeTrainingPlan   rdfs:subClassOf ref:Artifact ; rdfs:label "Plano de Capacitação para a Mudança"@pt .
 ### FIM DO RECORTE 4 ###
+
+### ============================================================
+### RECORTE 5 — Mesclado em 2026-07-23
+### Vocabulário de proveniência de curadoria e confidence level.
+### Fonte: Arquitetura_Ontologica_Empresarial_v1_3 §13.5 e §13.6.
+### Prefixo prov: já consta na tabela normativa de namespaces (§4),
+### não requer RFC de namespace.
+### DECISÃO PROVISÓRIA: o nome da classe ref:ConfidenceLevel não
+### consta na fonte; adotado por analogia a ref:InterventionStatus
+### (§8.12.3). Quinta enumeração fechada do arquivo — mesmo gatilho
+### de revisão dos itens 1 e 8 do Registro (importação real do
+### gist.owl). Ver Registro §1 item 15.
+### ============================================================
+# ------------------------------------------------------------
+# §13.6 — Confidence levels (enumeração fechada)
+# ------------------------------------------------------------
+ref:ConfidenceLevel a owl:Class ;
+    rdfs:label "Nível de Confiança"@pt ;
+    owl:oneOf ( ref:peer_reviewed_source ref:human_curated
+                ref:ai_generated_approved ref:ai_generated ) .
+ref:peer_reviewed_source a ref:ConfidenceLevel ;
+    rdfs:label "Fonte revisada por pares"@pt ;
+    rdfs:comment "Tripla derivada de fonte externa revisada por pares ou manual oficial. Contexto autoritativo, peso pleno."@pt .
+ref:human_curated a ref:ConfidenceLevel ;
+    rdfs:label "Curado por humano"@pt ;
+    rdfs:comment "Tripla escrita ou revisada e aprovada diretamente por humano sênior, sem geração por IA. Contexto autoritativo, peso pleno."@pt .
+ref:ai_generated_approved a ref:ConfidenceLevel ;
+    rdfs:label "Gerado por IA e aprovado"@pt ;
+    rdfs:comment "Tripla gerada por IA, aprovada em validação estrutural e por humano. Contexto válido com peso reduzido (sugestão inicial 0.5)."@pt .
+ref:ai_generated a ref:ConfidenceLevel ;
+    rdfs:label "Gerado por IA, não aprovado"@pt ;
+    rdfs:comment "Tripla gerada por IA ainda não aprovada. Nunca incluída como contexto autoritativo."@pt .
+org:confidenceLevel a owl:ObjectProperty ;
+    rdfs:range ref:ConfidenceLevel ;
+    rdfs:label "Nível de confiança da tripla"@pt ;
+    rdfs:comment "rdfs:domain deliberadamente não declarado: aplica-se a qualquer sujeito curado (instância de framework, capability, artefato). §13.6."@pt .
+# ------------------------------------------------------------
+# §13.5 — Proveniência de curadoria
+# Atividades e fontes usam prov:Activity e prov:Entity diretamente,
+# sem classe local. Padrão leve da §13.5, deliberadamente distinto
+# do template de pipeline do Manual §6.5 (curation-run/bundle com
+# hash), que é gerado por código e não deve ser escrito à mão.
+# ------------------------------------------------------------
+ref:sourceType a owl:DatatypeProperty ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Tipo da fonte de evidência (ex.: 'peer_reviewed_book', 'acervo_interno'). Literal por ora, conforme §13.5."@pt .
+### FIM DO RECORTE 5 ###
