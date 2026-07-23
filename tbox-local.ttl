@@ -811,3 +811,80 @@ ref:sourceType a owl:DatatypeProperty ;
     rdfs:range xsd:string ;
     rdfs:comment "Tipo da fonte de evidência (ex.: 'peer_reviewed_book', 'acervo_interno'). Literal por ora, conforme §13.5."@pt .
 ### FIM DO RECORTE 5 ###
+
+### ============================================================
+### RECORTE 6 — Mesclado em 2026-07-23
+### Proveniência retroativa das 10 instâncias mgmt: curadas no
+### commit c899bc7 (Seção 1 do catálogo + completação de stubs).
+### Padrão: Arquitetura §13.5 (anotação na própria instância).
+### Confidence level ref:ai_generated_approved conforme Registro
+### item 14: proposta gerada por IA em chat, aprovada por humano,
+### validada por pyshacl. Escolha conservadora e deliberada.
+### LIMITAÇÃO CONHECIDA: mgmt:LeanSixSigma e mgmt:OKR foram
+### declarados originalmente no Recorte 2 (2026-07-01, decisão do
+### consultor) e completados em 2026-07-23. O padrão leve da §13.5
+### comporta uma proveniência por instância; a anotação abaixo
+### registra o ato de curadoria mais recente.
+### ============================================================
+# Agentes
+ref:agent_claude_chat a prov:SoftwareAgent ;
+    rdfs:label "Claude em chat (claude.ai) — curadoria assistida pré-pipeline"@pt .
+ref:agent_ontology_steward a prov:Person ;
+    rdfs:label "Ontology Steward (consultor)"@pt .
+# Fontes
+ref:source_metamodelo_xlsx a prov:Entity ;
+    rdfs:label "Metamodelo.xlsx — aba '4. Frameworks-Lentes', 97 linhas"@pt ;
+    ref:sourceType "acervo_interno" .
+ref:source_arq_v1_3_cat_frameworks a prov:Entity ;
+    rdfs:label "Arquitetura Ontológica Empresarial v1.3 §8.3.1 — seis subclasses por natureza"@pt ;
+    ref:sourceType "human_curated_spec" .
+# Atividade de curadoria
+ref:curadoria_chat_2026_07_23_secao1 a prov:Activity ;
+    rdfs:label "Curadoria em chat — Seção 1 do catálogo de frameworks e completação de stubs"@pt ;
+    prov:wasAssociatedWith ref:agent_claude_chat, ref:agent_ontology_steward ;
+    prov:used ref:source_metamodelo_xlsx, ref:source_arq_v1_3_cat_frameworks ;
+    prov:generated mgmt:LeanSixSigma, mgmt:OKR, mgmt:LeanThinking, mgmt:EOS,
+                   mgmt:IcebergCompetencia, mgmt:LiderancaSituacional,
+                   mgmt:GrowthMindset, mgmt:WholeBrainModel, mgmt:BMM, mgmt:PMVV .
+# Anotação por instância
+mgmt:LeanSixSigma prov:wasGeneratedBy ref:curadoria_chat_2026_07_23_secao1 ;
+    prov:generatedAtTime "2026-07-23T00:00:00Z"^^xsd:dateTime ;
+    prov:wasDerivedFrom ref:source_metamodelo_xlsx ;
+    org:confidenceLevel ref:ai_generated_approved .
+mgmt:OKR prov:wasGeneratedBy ref:curadoria_chat_2026_07_23_secao1 ;
+    prov:generatedAtTime "2026-07-23T00:00:00Z"^^xsd:dateTime ;
+    prov:wasDerivedFrom ref:source_metamodelo_xlsx, ref:source_arq_v1_3_cat_frameworks ;
+    org:confidenceLevel ref:ai_generated_approved .
+mgmt:LeanThinking prov:wasGeneratedBy ref:curadoria_chat_2026_07_23_secao1 ;
+    prov:generatedAtTime "2026-07-23T00:00:00Z"^^xsd:dateTime ;
+    prov:wasDerivedFrom ref:source_metamodelo_xlsx ;
+    org:confidenceLevel ref:ai_generated_approved .
+mgmt:EOS prov:wasGeneratedBy ref:curadoria_chat_2026_07_23_secao1 ;
+    prov:generatedAtTime "2026-07-23T00:00:00Z"^^xsd:dateTime ;
+    prov:wasDerivedFrom ref:source_metamodelo_xlsx, ref:source_arq_v1_3_cat_frameworks ;
+    org:confidenceLevel ref:ai_generated_approved .
+mgmt:IcebergCompetencia prov:wasGeneratedBy ref:curadoria_chat_2026_07_23_secao1 ;
+    prov:generatedAtTime "2026-07-23T00:00:00Z"^^xsd:dateTime ;
+    prov:wasDerivedFrom ref:source_metamodelo_xlsx, ref:source_arq_v1_3_cat_frameworks ;
+    org:confidenceLevel ref:ai_generated_approved .
+mgmt:LiderancaSituacional prov:wasGeneratedBy ref:curadoria_chat_2026_07_23_secao1 ;
+    prov:generatedAtTime "2026-07-23T00:00:00Z"^^xsd:dateTime ;
+    prov:wasDerivedFrom ref:source_metamodelo_xlsx, ref:source_arq_v1_3_cat_frameworks ;
+    org:confidenceLevel ref:ai_generated_approved .
+mgmt:GrowthMindset prov:wasGeneratedBy ref:curadoria_chat_2026_07_23_secao1 ;
+    prov:generatedAtTime "2026-07-23T00:00:00Z"^^xsd:dateTime ;
+    prov:wasDerivedFrom ref:source_metamodelo_xlsx, ref:source_arq_v1_3_cat_frameworks ;
+    org:confidenceLevel ref:ai_generated_approved .
+mgmt:WholeBrainModel prov:wasGeneratedBy ref:curadoria_chat_2026_07_23_secao1 ;
+    prov:generatedAtTime "2026-07-23T00:00:00Z"^^xsd:dateTime ;
+    prov:wasDerivedFrom ref:source_metamodelo_xlsx, ref:source_arq_v1_3_cat_frameworks ;
+    org:confidenceLevel ref:ai_generated_approved .
+mgmt:BMM prov:wasGeneratedBy ref:curadoria_chat_2026_07_23_secao1 ;
+    prov:generatedAtTime "2026-07-23T00:00:00Z"^^xsd:dateTime ;
+    prov:wasDerivedFrom ref:source_metamodelo_xlsx ;
+    org:confidenceLevel ref:ai_generated_approved .
+mgmt:PMVV prov:wasGeneratedBy ref:curadoria_chat_2026_07_23_secao1 ;
+    prov:generatedAtTime "2026-07-23T00:00:00Z"^^xsd:dateTime ;
+    prov:wasDerivedFrom ref:source_metamodelo_xlsx ;
+    org:confidenceLevel ref:ai_generated_approved .
+### FIM DO RECORTE 6 ###
