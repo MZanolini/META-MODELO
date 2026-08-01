@@ -781,21 +781,33 @@ def main():
     ap.add_argument("--perfil", default="repositorio", choices=["repositorio", "sessao"])
     ap.add_argument("--remocao-justificada", default=None,
                      help="motivo declarado para remocao de triplas aceita na checagem 3")
+    ap.add_argument("--somente", default=None,
+                     help="lista separada por virgula das checagens a rodar, ex: 1,2,3 (default: todas as 7). "
+                          "Uso tipico: CI que so alcanca o clone, sem pasta canonica/anexos.")
     args = ap.parse_args()
 
     repo = Path(args.repo).resolve()
     baseline_path = Path(args.baseline).resolve() if args.baseline else Path(__file__).resolve().parent / "baseline.json"
     baseline = json.loads(baseline_path.read_text(encoding="utf-8"))
 
+    selecionadas = {int(n) for n in args.somente.split(",")} if args.somente else set(range(1, 8))
+
     r1 = checagem_1(repo, baseline)
     r2 = checagem_2(repo, baseline, r1.estado)
-    r3 = checagem_3(repo, baseline, args.remocao_justificada)
-    r4 = checagem_4(repo, baseline)
-    r5 = checagem_5(repo, baseline, args.pasta_canonica, args.anexos)
-    r6 = checagem_6(repo, baseline, args.pasta_canonica, args.anexos)
-    r7 = checagem_7(repo, baseline, args.pasta_canonica, args.anexos)
+    todas = {1: r1, 2: r2}
+    if 3 in selecionadas:
+        todas[3] = checagem_3(repo, baseline, args.remocao_justificada)
+    if 4 in selecionadas:
+        todas[4] = checagem_4(repo, baseline)
+    if 5 in selecionadas:
+        todas[5] = checagem_5(repo, baseline, args.pasta_canonica, args.anexos)
+    if 6 in selecionadas:
+        todas[6] = checagem_6(repo, baseline, args.pasta_canonica, args.anexos)
+    if 7 in selecionadas:
+        todas[7] = checagem_7(repo, baseline, args.pasta_canonica, args.anexos)
 
-    report, exit_code = build_report(args.perfil, repo, baseline, [r1, r2, r3, r4, r5, r6, r7])
+    resultados = [todas[n] for n in sorted(selecionadas) if n in todas]
+    report, exit_code = build_report(args.perfil, repo, baseline, resultados)
     print(report)
     sys.exit(exit_code)
 
