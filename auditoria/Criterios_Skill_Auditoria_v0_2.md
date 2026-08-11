@@ -1,12 +1,13 @@
-# Critérios da Skill de Auditoria de Processo, v0.1
+# Critérios da Skill de Auditoria de Processo, v0.2
 
-**Status**: proposto
-**Data**: 2026-07-31
-**Pacote**: S01a do backlog de M1 (ADR-002 §4)
-**Decisor**: consultor (Marcelo Zanolini), em sessão de chat de 2026-07-31
+**Status**: proposto (v0.1), emendado (v0.2)
+**Data**: 2026-07-31; emenda 2026-08-11
+**Pacote**: S01a do backlog de M1 (ADR-002 §4); emenda na sessão S01b-fix
+**Decisor**: consultor (Marcelo Zanolini), em sessão de chat de 2026-07-31; emenda decidida em sessão de 2026-08-11
 **Escopo**: processo de construção do programa. Não é escopo de Camada 2.5 e não vai no Registro.
 **Entrada para**: S01b, implementação em Claude Code com Sonnet 5 contra esta especificação.
 **Estado de partida assumido**: repositório `https://github.com/MZanolini/META-MODELO.git`, branch `main`, HEAD `7111e03`; `tbox-local.ttl` com 833 triplas; `shapes.ttl` com 16 NodeShapes; `pyshacl advanced=True` conformando sem violação; Registro com 162 linhas.
+**Emenda v0.2 (2026-08-11)**: sessão S01b-fix corrige dois defeitos de implementação da checagem 1 (o `sha256` do baseline não vinha de medição; o diff de sujeitos não canonicalizava blank node) e emenda o critério da checagem 7 para comparar conteúdo normalizado quanto a fim de linha — ver nota ao final da seção da checagem 7. Registrado como item 21 do Registro de Pendências.
 
 ---
 
@@ -186,6 +187,8 @@ O esquema abaixo é normativo quanto aos campos, não quanto ao formato de seria
 **Observação de escopo medida em 2026-07-31**: dos dez anexos do Project, apenas o `Registro_Pendencias_Camada25.md` tem contraparte no repositório, e os dois estavam idênticos nesta data. A checagem 7 como enunciada em D4, restrita a anexo contra HEAD, cobre portanto uma única linha. Por isso a especificação a estende ao par anexo contra pasta canônica quando não houver lado no repositório, sem o que a checagem seria quase inerte justamente para os documentos que mais orientam sessão, como o ADR-002 e a calibração.
 
 **Não cobre**: qual lado está certo, apenas que divergem; e sincronia do espelho FUSE `camada25-ontologia/`, que é cópia manual conhecidamente defasada e não deve entrar no mapa de correspondência.
+
+**Emenda de 2026-08-11 (v0.2).** A comparação entre cópias é feita sobre o conteúdo normalizado quanto a fim de linha: `\r\n` e `\r` são convertidos em `\n` antes do cálculo do sha256. Fundamento: as três cópias vivem em ambientes distintos (repositório em LF, pasta canônica em Windows, anexo do Project reprocessado no upload), e uma checagem que reprova por forma de transporte em vez de por conteúdo deixa de discriminar e ensina o operador a ignorar o próprio vermelho. O que esta checagem deixa de cobrir a partir daqui: divergência de fim de linha entre as cópias, que passa a sair como nota informativa sem alterar o veredito, e divergência de codificação, que nunca esteve coberta. Gatilho de revisão: aparecer divergência real de conteúdo mascarada pela normalização, ou passar a existir cópia em codificação distinta de UTF-8; reavaliar também na redação da Arquitetura v1.4, no pacote S07.
 
 ---
 

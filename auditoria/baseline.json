@@ -4,7 +4,7 @@
   "checagem_1": {
     "commit_auditado": "7111e03",
     "triplas": 833,
-    "sha256": "b9cdc05c0ff1c708f1094bbfcf1ff3243951f7300bb6302da2e0ba04427e422c"
+    "sha256": "a5e6a9318053930393f47c0d838941c80d49d57c365d7a9dfcd7dea7c9253148"
   },
 
   "shapes": {
@@ -128,7 +128,7 @@
     },
     {
       "documento": "Criterios_Skill_Auditoria",
-      "repositorio": "auditoria/Criterios_Skill_Auditoria_v0_1.md",
+      "repositorio": "auditoria/Criterios_Skill_Auditoria_v0_2.md",
       "pasta_canonica": "Criterios_Skill_Auditoria_v0_1.md",
       "anexo": null,
       "fonte_de_verdade": false

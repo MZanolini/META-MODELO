@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Skill de auditoria de processo -- META-MODELO, pacote S01b (ADR-002 D4).
 # Logica deterministica das sete checagens. Criterios normativos em
-# Criterios_Skill_Auditoria_v0_1.md -- este arquivo nao os redefine.
+# Criterios_Skill_Auditoria_v0_2.md -- este arquivo nao os redefine.
 #
 # Proibicoes de execucao (Criterios Secao 8): esta skill nunca escreve no
 # baseline, nunca corrige o que audita, nunca commita. Quando encontra
@@ -67,8 +67,25 @@ def git_show(repo, commit, path):
     return r.stdout
 
 
+def git_show_bytes(repo, commit, path):
+    # Bytes crus do blob, sem decodificar/reencodar texto -- usado onde o
+    # hash importa (checagem_1), pra nao mascarar um problema real de
+    # encoding atras de errors="replace".
+    r = subprocess.run(["git", "show", f"{commit}:{path}"], cwd=str(repo), capture_output=True)
+    if r.returncode != 0:
+        return None
+    return r.stdout
+
+
 def sha256_bytes(b):
     return hashlib.sha256(b).hexdigest()
+
+
+UTF8_BOM = b"\xef\xbb\xbf"
+
+
+def normalize_eol(data):
+    return data.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
 
 
 def parse_ttl_bytes(data):
@@ -80,11 +97,24 @@ def parse_ttl_bytes(data):
 # ------------------------------------------------------ checagem 1 ---
 
 def checagem_1(repo, baseline):
+    try:
+        commit_atual = git(repo, "rev-parse", "HEAD").strip()
+    except RuntimeError as e:
+        return CheckResult(1, "contagem de triplas", INDETERMINADO, str(e))
+
+    # Le o arquivo do working tree (nao o blob do HEAD): a checagem precisa
+    # continuar sensivel a edicao ainda nao commitada (ver V2 da bateria de
+    # verificacao da sessao S01b-fix). O que muda em 2026-08-11 e normalizar
+    # fim de linha antes de hashear -- em ambiente Windows com
+    # core.autocrlf=true o checkout converte LF -> CRLF, o que mudava o
+    # sha256 do arquivo em disco sem mudar o conteudo versionado. Mesmo
+    # mecanismo da emenda de checagem_7; blob do git ja e LF puro, entao
+    # normalizar o commit_auditado no baseline nao muda o valor gravado.
     tbox_path = repo / "tbox-local.ttl"
     if not tbox_path.exists():
         return CheckResult(1, "contagem de triplas", INDETERMINADO,
                             "tbox-local.ttl nao encontrado no clone.")
-    raw = tbox_path.read_bytes()
+    raw = normalize_eol(tbox_path.read_bytes())
     sha_atual = sha256_bytes(raw)
     try:
         g = parse_ttl_bytes(raw)
@@ -93,10 +123,6 @@ def checagem_1(repo, baseline):
                             f"parse com rdflib abortou: {e}")
 
     count_atual = len(g)
-    try:
-        commit_atual = git(repo, "rev-parse", "HEAD").strip()
-    except RuntimeError as e:
-        return CheckResult(1, "contagem de triplas", INDETERMINADO, str(e))
 
     b = baseline["checagem_1"]
     commit_base, count_base, sha_base = b["commit_auditado"], b["triplas"], b["sha256"]
@@ -125,22 +151,56 @@ def checagem_1(repo, baseline):
         resumo = "delta zero, sha256 identico."
 
     if estado in (FALHA, AVISO):
-        old_content = git_show(repo, commit_base, "tbox-local.ttl")
+        old_content = git_show_bytes(repo, commit_base, "tbox-local.ttl")
+        old_content = normalize_eol(old_content) if old_content is not None else None
         if old_content is None:
             linhas.append("nao foi possivel ler tbox-local.ttl no commit base (git show falhou).")
         else:
             try:
-                g_old = parse_ttl_bytes(old_content.encode("utf-8"))
-                subs_old, subs_new = set(g_old.subjects()), set(g.subjects())
-                added, removed = subs_new - subs_old, subs_old - subs_new
-                linhas.append(f"sujeitos adicionados ({len(added)}):")
-                for s in sorted(added, key=str):
-                    n = sum(1 for _ in g.triples((s, None, None)))
-                    linhas.append(f"  + {s}  ({n} triplas)")
-                linhas.append(f"sujeitos removidos ({len(removed)}):")
-                for s in sorted(removed, key=str):
-                    n = sum(1 for _ in g_old.triples((s, None, None)))
-                    linhas.append(f"  - {s}  ({n} triplas)")
+                g_old = parse_ttl_bytes(old_content)
+
+                # graph_diff canonicaliza blank nodes por isomorfismo
+                # estrutural (mesmo mecanismo que a checagem_3 ja usa) -- e a
+                # unica fonte de verdade aqui para triplas que realmente
+                # mudaram. Comparar direto o SET de sujeitos, como a versao
+                # anterior fazia, so pega sujeito inteiramente novo ou
+                # inteiramente sumido; perde o caso de um sujeito que
+                # continua existindo mas perdeu ou ganhou tripla, que e
+                # exatamente o cenario de "contagem igual, sha diverge".
+                _, base_only, head_only = graph_diff(to_isomorphic(g_old), to_isomorphic(g))
+                removidas = list(base_only.triples((None, None, None)))
+                adicionadas = list(head_only.triples((None, None, None)))
+
+                def agrupar_por_sujeito_nomeado(triplas):
+                    agrupado, anonimas = {}, 0
+                    for t in triplas:
+                        if isinstance(t[0], rdflib.URIRef):
+                            agrupado.setdefault(t[0], []).append(t)
+                        else:
+                            anonimas += 1
+                    return agrupado, anonimas
+
+                rem_por_sujeito, rem_anonimas = agrupar_por_sujeito_nomeado(removidas)
+                add_por_sujeito, add_anonimas = agrupar_por_sujeito_nomeado(adicionadas)
+
+                sujeitos_afetados = sorted(set(rem_por_sujeito) | set(add_por_sujeito), key=str)
+                linhas.append(f"sujeitos nomeados afetados ({len(sujeitos_afetados)}), "
+                               f"reconciliavel aritmeticamente com o delta de contagem:")
+                for s in sujeitos_afetados:
+                    n_rem, n_add = len(rem_por_sujeito.get(s, [])), len(add_por_sujeito.get(s, []))
+                    n_atual = sum(1 for _ in g.triples((s, None, None)))
+                    linhas.append(f"  {s}: -{n_rem}/+{n_add} triplas (tem {n_atual} triplas no atual)")
+
+                # Estruturas anonimas em agregado -- triplas cujo SUJEITO e
+                # blank node (sem ancora nomeada nenhuma). Triplas de sujeito
+                # nomeado com objeto blank node ja entraram no agrupamento
+                # acima, sob o sujeito nomeado.
+                n_bnodes_old = len({t for t in g_old.all_nodes() if isinstance(t, rdflib.BNode)})
+                n_bnodes_new = len({t for t in g.all_nodes() if isinstance(t, rdflib.BNode)})
+                isomorficas = "sim" if (rem_anonimas == 0 and add_anonimas == 0) else "nao"
+                linhas.append(f"estruturas anonimas: {n_bnodes_old} no base, {n_bnodes_new} no atual, "
+                               f"isomorficas={isomorficas}, delta de triplas "
+                               f"+{add_anonimas}/-{rem_anonimas}")
             except Exception as e:
                 linhas.append(f"falha ao comparar grafos (commit base vs atual): {e}")
 
@@ -405,6 +465,20 @@ def checagem_4(repo, baseline):
 
 
 # ------------------------------------------------------ checagem 7 ---
+# Emenda de 2026-08-11 (v0.2). A comparacao entre copias e feita sobre o
+# conteudo normalizado quanto a fim de linha: \r\n e \r sao convertidos em
+# \n antes do calculo do sha256. Fundamento: as tres copias vivem em
+# ambientes distintos (repositorio em LF, pasta canonica em Windows, anexo
+# do Project reprocessado no upload), e uma checagem que reprova por forma
+# de transporte em vez de por conteudo deixa de discriminar e ensina o
+# operador a ignorar o proprio vermelho. O que esta checagem deixa de
+# cobrir a partir daqui: divergencia de fim de linha entre as copias, que
+# passa a sair como nota informativa sem alterar o veredito, e divergencia
+# de codificacao, que nunca esteve coberta. Gatilho de revisao: aparecer
+# divergencia real de conteudo mascarada pela normalizacao, ou passar a
+# existir copia em codificacao distinta de UTF-8; reavaliar tambem na
+# redacao da Arquitetura v1.4, no pacote S07.
+
 
 def checagem_7(repo, baseline, pasta_canonica, anexos):
     itens = baseline["correspondencia"]
@@ -414,7 +488,7 @@ def checagem_7(repo, baseline, pasta_canonica, anexos):
 
     for item in itens:
         doc = item["documento"]
-        hashes, mtimes = {}, {}
+        raws, hashes, hashes_norm, mtimes = {}, {}, {}, {}
         for lado, base_dir in (("repositorio", repo), ("pasta_canonica", pasta_canonica), ("anexo", anexos)):
             relpath = item.get(lado)
             if not relpath or not base_dir:
@@ -423,23 +497,46 @@ def checagem_7(repo, baseline, pasta_canonica, anexos):
             p = Path(base_dir) / relpath
             if p.exists():
                 data = p.read_bytes()
+                raws[lado] = data
                 hashes[lado] = sha256_bytes(data)
+                hashes_norm[lado] = sha256_bytes(normalize_eol(data))
                 mtimes[lado] = p.stat().st_mtime
             else:
                 hashes[lado] = None
 
         available = {k: v for k, v in hashes.items() if v is not None}
+        nota = ""
         if len(available) < 2:
             veredito = INDETERMINADO
         elif len(set(available.values())) == 1:
             veredito = PASSA
             ok_count += 1
+        elif len({hashes_norm[k] for k in available}) == 1:
+            # bytes crus divergem, conteudo normalizado por fim de linha bate
+            veredito = PASSA
+            ok_count += 1
+            grupos_crus = {}
+            for k, h in available.items():
+                grupos_crus.setdefault(h, []).append(k)
+            partes = " vs ".join(",".join(sorted(v)) for v in grupos_crus.values())
+            nota = f"conteudo identico; fim de linha difere entre {partes}"
         else:
             veredito = FALHA if item.get("fonte_de_verdade") else AVISO
+            # ainda diverge depois de normalizar fim de linha -- confere se a
+            # unica diferenca remanescente e um BOM UTF-8 no inicio de um
+            # lado. Nao normaliza por conta propria: so relata.
+            sem_bom = {k: sha256_bytes(normalize_eol(
+                raws[k][3:] if raws[k][:3] == UTF8_BOM else raws[k])) for k in available}
+            if len(set(sem_bom.values())) == 1:
+                lados_com_bom = sorted(k for k in available if raws[k][:3] == UTF8_BOM)
+                nota = (f"apos normalizar fim de linha, a unica diferenca remanescente e um BOM UTF-8 "
+                        f"no inicio de: {', '.join(lados_com_bom)}. BOM nao foi normalizado -- decisao pendente.")
 
         pior = worse(pior, veredito)
         linhas.append(f"{doc}: repositorio={hashes.get('repositorio')} pasta_canonica={hashes.get('pasta_canonica')} "
                        f"anexo={hashes.get('anexo')} -> {veredito}")
+        if nota:
+            linhas.append(f"    nota: {nota}")
         if veredito not in (PASSA, INDETERMINADO):
             linhas.append(f"    mtimes: {mtimes}")
 

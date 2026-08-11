@@ -8,7 +8,7 @@ description: Roda as sete checagens deterministicas de auditoria de processo do 
 Invólucro fino sobre `auditoria/audit.py`. A lógica das sete checagens é
 código determinístico ali; os critérios que ela verifica (o que conta como
 PASSA, AVISO, FALHA, INDETERMINADO, e o que cada checagem não cobre) estão
-em `auditoria/Criterios_Skill_Auditoria_v0_1.md`. Esta skill não repete
+em `auditoria/Criterios_Skill_Auditoria_v0_2.md`. Esta skill não repete
 nem reinterpreta nenhum critério — se um resultado parecer errado, o
 problema está no script ou no `baseline.json`, nunca em reler o critério
 com outro julgamento.
