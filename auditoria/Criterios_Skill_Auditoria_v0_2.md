@@ -89,6 +89,8 @@ O esquema abaixo é normativo quanto aos campos, não quanto ao formato de seria
 
 **Não cobre**: se as triplas novas estão corretas; se o que deveria existir existe, que é a checagem 6; e alterações em `shapes.ttl`, cuja integridade é medida pela checagem 2.
 
+**Emenda de 2026-08-11 (v0.2).** A checagem 1 compara o conteúdo do `tbox-local.ttl` na cópia de trabalho, normalizado quanto a fim de linha (`\r\n` e `\r` convertidos em `\n`) antes do cálculo do sha256, e não os bytes crus do arquivo nem o blob armazenado pelo Git. Fundamento: a cópia de trabalho em Windows carrega CRLF por `core.autocrlf=true` enquanto o blob guarda LF, de modo que hashear bytes crus reprova por forma de transporte, e hashear o blob perde a sensibilidade a edição ainda não commitada, que é justamente o que esta checagem existe para detectar. O delta de sujeitos é apurado por `graph_diff` sobre grafos canonicalizados, em três categorias: sujeito nomeado por URI adicionado, sujeito nomeado por URI removido, e sujeito nomeado por URI que permanece mas teve triplas alteradas; estruturas anônimas entram apenas em agregado, por isomorfismo. O que esta checagem deixa de cobrir a partir daqui: divergência de fim de linha no próprio `tbox-local.ttl`. Gatilho de revisão: o mesmo do item 21 do Registro.
+
 ### Checagem 2: validação SHACL
 
 **Mede** a conformidade estrutural do tbox contra as shapes, com o conjunto de shapes verificadamente intacto.
