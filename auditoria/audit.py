@@ -716,6 +716,33 @@ def checagem_5(repo, baseline, pasta_canonica, anexos):
 
 # ------------------------------------------------------------ checagem 6 ---
 
+_PREFIX_DECL_RE = re.compile(r'^@prefix\s+([A-Za-z][A-Za-z0-9_-]*):\s*<([^>]*)>\s*\.', re.MULTILINE)
+
+
+def parse_ttl_prefixes(path):
+    """Le as linhas @prefix de um .ttl. Autoridade sobre o que cada CURIE
+    significa neste projeto -- nao usar dict(g.namespaces()) do rdflib, que
+    pre-vincula prefixos como 'org' ao vocabulario do W3C e sobrepoe a
+    declaracao do arquivo."""
+    texto = path.read_text(encoding="utf-8")
+    return dict(_PREFIX_DECL_RE.findall(texto))
+
+
+def carregar_prefixos_ttl(tbox_path, shapes_path):
+    prefixos_tbox = parse_ttl_prefixes(tbox_path)
+    prefixos_shapes = parse_ttl_prefixes(shapes_path)
+    ambiguidades = []
+    ns_map = {}
+    for prefixo in sorted(set(prefixos_tbox) | set(prefixos_shapes)):
+        ns_tbox = prefixos_tbox.get(prefixo)
+        ns_shapes = prefixos_shapes.get(prefixo)
+        if ns_tbox is not None and ns_shapes is not None and ns_tbox != ns_shapes:
+            ambiguidades.append((prefixo, ns_tbox, ns_shapes))
+            continue
+        ns_map[prefixo] = ns_tbox if ns_tbox is not None else ns_shapes
+    return ns_map, ambiguidades, prefixos_tbox, prefixos_shapes
+
+
 def checagem_6(repo, baseline, pasta_canonica, anexos):
     cfg = baseline.get("checagem_6")
     if not cfg:
@@ -756,12 +783,31 @@ def checagem_6(repo, baseline, pasta_canonica, anexos):
     locais = {k: v for k, v in ocorrencias.items() if k.split(":", 1)[0] in prefixos_locais}
     externos = {k: v for k, v in ocorrencias.items() if k.split(":", 1)[0] in prefixos_externos}
 
-    ns_map = dict(g.namespaces())
+    ns_map, ambiguidades, prefixos_tbox, prefixos_shapes = carregar_prefixos_ttl(tbox_path, shapes_path)
+
+    if ambiguidades:
+        linhas_amb = [f"  {p}:  tbox-local.ttl = <{t}>   shapes.ttl = <{s}>" for p, t, s in ambiguidades]
+        return CheckResult(6, "cobertura da Arquitetura contra o tbox", INDETERMINADO,
+                            f"prefixo declarado com namespaces diferentes em tbox-local.ttl e shapes.ttl: "
+                            f"{[p for p, _, _ in ambiguidades]}. Resolucao de ambiguidade de prefixo e decisao curatorial.",
+                            "--- prefixo ambiguo entre tbox-local.ttl e shapes.ttl ---\n" + "\n".join(linhas_amb))
+
+    namespaces_declaradas_ttl = set(prefixos_tbox.values()) | set(prefixos_shapes.values())
+    colisoes = [(p, ns_map[p]) for p in sorted(prefixos_locais)
+                if p in ns_map and ns_map[p] not in namespaces_declaradas_ttl]
+    if colisoes:
+        detalhe = "\n".join(f"  {p}: {ns} (nao vem de nenhuma declaracao @prefix em tbox-local.ttl ou shapes.ttl)"
+                             for p, ns in colisoes)
+        return CheckResult(6, "cobertura da Arquitetura contra o tbox", INDETERMINADO,
+                            f"guarda de colisao de prefixo falhou para: {[p for p, _ in colisoes]}",
+                            "--- guarda de colisao de prefixo ---\n" + detalhe)
+
+    prefixos_locais_sem_declaracao = sorted(p for p in prefixos_locais if p not in ns_map)
 
     def resolve_uri(curie):
         prefix, local = curie.split(":", 1)
         ns = ns_map.get(prefix)
-        return rdflib.URIRef(str(ns) + local) if ns is not None else None
+        return rdflib.URIRef(ns + local) if ns is not None else None
 
     graph_uris = set()
     for s, p, o in g:
@@ -769,8 +815,11 @@ def checagem_6(repo, baseline, pasta_canonica, anexos):
             if isinstance(term, rdflib.URIRef):
                 graph_uris.add(term)
 
+    locais_sem_ns = {k: v for k, v in locais.items() if k.split(":", 1)[0] in prefixos_locais_sem_declaracao}
+    locais_resolviveis = {k: v for k, v in locais.items() if k.split(":", 1)[0] not in prefixos_locais_sem_declaracao}
+
     ausentes = {}
-    for ident, linha in locais.items():
+    for ident, linha in locais_resolviveis.items():
         uri = resolve_uri(ident)
         if uri is None or uri not in graph_uris:
             ausentes[ident] = linha
@@ -786,19 +835,38 @@ def checagem_6(repo, baseline, pasta_canonica, anexos):
         estado = FALHA
     elif lacunas_reais:
         estado = worse(estado, AVISO)
+    if prefixos_locais_sem_declaracao:
+        estado = worse(estado, INDETERMINADO)
 
     resumo = (f"{len(locais)} identificadores locais extraidos ({lado}, {path.name}), "
-              f"{len(locais) - len(ausentes)} presentes no grafo, {len(ausentes)} ausentes "
+              f"{len(locais) - len(locais_sem_ns) - len(ausentes)} presentes no grafo, {len(ausentes)} ausentes "
               f"({len(nao_triados)} NAO TRIADOS, {len(lacunas_reais)} lacunas reais abertas, "
               f"{len(outros_triados)} triados como nao-lacuna); {len(externos)} ocorrencia(s) de prefixo externo "
               f"(contadas a parte, sem efeito no veredito).")
+    if locais_sem_ns:
+        resumo += (f" {len(locais_sem_ns)} identificador(es) de prefixo local sem namespace declarada nos .ttl "
+                    f"({prefixos_locais_sem_declaracao}), nao contados como ausentes.")
 
     linhas = [
         f"extrator: {cfg.get('extrator_versao', '(nao registrado)')}",
         f"arquivo Arquitetura resolvido via: {lado} -> {path}",
         f"prefixos em escopo local: {sorted(prefixos_locais)}",
         f"prefixos externos (contados a parte): {sorted(prefixos_externos)}",
+        "mapa de prefixos efetivamente usado (declaracao dos .ttl):",
     ]
+    for p in sorted(ns_map):
+        origens = []
+        if prefixos_tbox.get(p) == ns_map[p]:
+            origens.append("tbox-local.ttl")
+        if prefixos_shapes.get(p) == ns_map[p]:
+            origens.append("shapes.ttl")
+        linhas.append(f"  {p}: <{ns_map[p]}>  (declarado em: {', '.join(origens)})")
+    if prefixos_locais_sem_declaracao:
+        linhas.append(f"--- prefixo local sem namespace declarada ({len(prefixos_locais_sem_declaracao)}) -- "
+                       f"INDETERMINADO, ausencia nao verificavel ---")
+        linhas.append(f"  prefixos: {prefixos_locais_sem_declaracao}")
+        for k in sorted(locais_sem_ns):
+            linhas.append(f"  {k}  (primeira ocorrencia: linha {locais_sem_ns[k]})")
     if nao_triados:
         linhas.append(f"--- NAO TRIADOS ({len(nao_triados)}) -- causa FALHA por construcao ---")
         for k in sorted(nao_triados):
@@ -869,6 +937,36 @@ def build_report(perfil, repo, baseline, results):
     return "\n".join(lines), exit_code
 
 
+def autoteste(repo):
+    """Verifica, sem tocar em nada, a resolucao de prefixo da checagem 6.
+    Casos de sinal oposto de proposito: um resolvedor que devolvesse tudo
+    como presente passaria no segundo caso mas nao no terceiro."""
+    tbox_path, shapes_path = repo / "tbox-local.ttl", repo / "shapes.ttl"
+    ns_map, ambiguidades, _, _ = carregar_prefixos_ttl(tbox_path, shapes_path)
+
+    g = rdflib.Graph()
+    g.parse(str(tbox_path), format="turtle")
+    g.parse(str(shapes_path), format="turtle")
+    graph_uris = {t for s, p, o in g for t in (s, p, o) if isinstance(t, rdflib.URIRef)}
+
+    afirmacoes = []
+
+    ok = not ambiguidades and ns_map.get("org") == "https://example.org/ontology/"
+    afirmacoes.append(("org: resolve para https://example.org/ontology/", ok))
+
+    uri_alert = rdflib.URIRef(ns_map["org"] + "AlgedonicAlert") if ns_map.get("org") else None
+    afirmacoes.append(("org:AlgedonicAlert (owl:Class no tbox-local.ttl) e encontrado como presente no grafo",
+                        uri_alert is not None and uri_alert in graph_uris))
+
+    uri_maturity = rdflib.URIRef(ns_map["ref"] + "MaturityCriterion") if ns_map.get("ref") else None
+    afirmacoes.append(("ref:MaturityCriterion e encontrado como ausente no grafo",
+                        uri_maturity is not None and uri_maturity not in graph_uris))
+
+    for descricao, passou in afirmacoes:
+        print(f"[{'PASSA' if passou else 'FALHA'}] {descricao}")
+    return all(passou for _, passou in afirmacoes)
+
+
 def main():
     ap = argparse.ArgumentParser(description="Skill de auditoria de processo -- META-MODELO S01b")
     ap.add_argument("--repo", default=".", help="raiz do clone git a auditar")
@@ -881,7 +979,14 @@ def main():
     ap.add_argument("--somente", default=None,
                      help="lista separada por virgula das checagens a rodar, ex: 1,2,3 (default: todas as 7). "
                           "Uso tipico: CI que so alcanca o clone, sem pasta canonica/anexos.")
+    ap.add_argument("--autoteste", action="store_true",
+                     help="roda tres afirmacoes de sanidade sobre a resolucao de prefixo da checagem 6 e sai, "
+                          "sem executar a auditoria")
     args = ap.parse_args()
+
+    if args.autoteste:
+        ok = autoteste(Path(args.repo).resolve())
+        sys.exit(0 if ok else 1)
 
     repo = Path(args.repo).resolve()
     baseline_path = Path(args.baseline).resolve() if args.baseline else Path(__file__).resolve().parent / "baseline.json"
