@@ -101,7 +101,255 @@
     "prefixos_escopo_local": ["ref", "org", "mgmt", "pcf", "demo", "vsm"],
     "prefixos_externos": ["gist", "archimate", "prov", "owl", "sh", "skos", "naics"],
     "arquivo_arquitetura": {"pasta_canonica": "Arquitetura_Ontologica_Empresarial_v1_3.docx"},
-    "triagem": {}
+    "triagem": {
+      "ref:tpl_FMEA_v2": {
+        "estado": "exemplo_abox",
+        "fundamento": "Instância inventada pela Arquitetura para demonstrar padrão; não documenta curadoria realizada. A linha divisória adotada não é TBox contra ABox, porque o grafo já contém ABox de curadoria real (`ref:curadoria_chat_2026_07_23_secao1` e a proveniência do catálogo de frameworks); é instância que afirma algo sobre o mundo contra instância que ilustra um padrão no texto."
+      },
+      "ref:tpl_ProjectCharter": {
+        "estado": "exemplo_abox",
+        "fundamento": "Instância inventada pela Arquitetura para demonstrar padrão; não documenta curadoria realizada. A linha divisória adotada não é TBox contra ABox, porque o grafo já contém ABox de curadoria real (`ref:curadoria_chat_2026_07_23_secao1` e a proveniência do catálogo de frameworks); é instância que afirma algo sobre o mundo contra instância que ilustra um padrão no texto."
+      },
+      "ref:obj_charter_assinado": {
+        "estado": "exemplo_abox",
+        "fundamento": "Instância inventada pela Arquitetura para demonstrar padrão; não documenta curadoria realizada. A linha divisória adotada não é TBox contra ABox, porque o grafo já contém ABox de curadoria real (`ref:curadoria_chat_2026_07_23_secao1` e a proveniência do catálogo de frameworks); é instância que afirma algo sobre o mundo contra instância que ilustra um padrão no texto."
+      },
+      "ref:atv_020_F1_01": {
+        "estado": "exemplo_abox",
+        "fundamento": "Instância inventada pela Arquitetura para demonstrar padrão; não documenta curadoria realizada. A linha divisória adotada não é TBox contra ABox, porque o grafo já contém ABox de curadoria real (`ref:curadoria_chat_2026_07_23_secao1` e a proveniência do catálogo de frameworks); é instância que afirma algo sobre o mundo contra instância que ilustra um padrão no texto."
+      },
+      "ref:cap_RiscoOperacionalBancario": {
+        "estado": "exemplo_abox",
+        "fundamento": "Instância inventada pela Arquitetura para demonstrar padrão; não documenta curadoria realizada. A linha divisória adotada não é TBox contra ABox, porque o grafo já contém ABox de curadoria real (`ref:curadoria_chat_2026_07_23_secao1` e a proveniência do catálogo de frameworks); é instância que afirma algo sobre o mundo contra instância que ilustra um padrão no texto."
+      },
+      "ref:BPM_MM_L3_StandardizedProcesses": {
+        "estado": "exemplo_abox",
+        "fundamento": "Instância inventada pela Arquitetura para demonstrar padrão; não documenta curadoria realizada. A linha divisória adotada não é TBox contra ABox, porque o grafo já contém ABox de curadoria real (`ref:curadoria_chat_2026_07_23_secao1` e a proveniência do catálogo de frameworks); é instância que afirma algo sobre o mundo contra instância que ilustra um padrão no texto."
+      },
+      "pcf:n_11_0": {
+        "estado": "exemplo_abox",
+        "fundamento": "Instância inventada pela Arquitetura para demonstrar padrão; não documenta curadoria realizada. A linha divisória adotada não é TBox contra ABox, porque o grafo já contém ABox de curadoria real (`ref:curadoria_chat_2026_07_23_secao1` e a proveniência do catálogo de frameworks); é instância que afirma algo sobre o mundo contra instância que ilustra um padrão no texto."
+      },
+      "pcf:n_11_1": {
+        "estado": "exemplo_abox",
+        "fundamento": "Instância inventada pela Arquitetura para demonstrar padrão; não documenta curadoria realizada. A linha divisória adotada não é TBox contra ABox, porque o grafo já contém ABox de curadoria real (`ref:curadoria_chat_2026_07_23_secao1` e a proveniência do catálogo de frameworks); é instância que afirma algo sobre o mundo contra instância que ilustra um padrão no texto."
+      },
+      "pcf:n_11_1_1_1_1": {
+        "estado": "exemplo_abox",
+        "fundamento": "Instância inventada pela Arquitetura para demonstrar padrão; não documenta curadoria realizada. A linha divisória adotada não é TBox contra ABox, porque o grafo já contém ABox de curadoria real (`ref:curadoria_chat_2026_07_23_secao1` e a proveniência do catálogo de frameworks); é instância que afirma algo sobre o mundo contra instância que ilustra um padrão no texto."
+      },
+      "ref:agent_run_2026_06_24_001": {
+        "estado": "exemplo_abox",
+        "fundamento": "Instância inventada pela Arquitetura para demonstrar o padrão de proveniência; a rodada `ref:agent_run_2026_06_24_001` é fictícia e nunca ocorreu. Nota separada: `mgmt:TOC` existe no grafo sem proveniência declarada, o que é pendência distinta ligada ao item 14 do Registro e não se resolve por esta triagem."
+      },
+      "ref:source_goldratt_thegoal_1984": {
+        "estado": "exemplo_abox",
+        "fundamento": "Instância inventada pela Arquitetura para demonstrar o padrão de proveniência; a rodada `ref:agent_run_2026_06_24_001` é fictícia e nunca ocorreu. Nota separada: `mgmt:TOC` existe no grafo sem proveniência declarada, o que é pendência distinta ligada ao item 14 do Registro e não se resolve por esta triagem."
+      },
+      "ref:CuradorAgentV1": {
+        "estado": "exemplo_abox",
+        "fundamento": "Instância inventada pela Arquitetura para demonstrar o padrão de proveniência; a rodada `ref:agent_run_2026_06_24_001` é fictícia e nunca ocorreu. Nota separada: `mgmt:TOC` existe no grafo sem proveniência declarada, o que é pendência distinta ligada ao item 14 do Registro e não se resolve por esta triagem."
+      },
+      "org:archimateAspect": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Vocabulário do eixo de perspectiva da matriz 6x6, especificado normativamente com axiomas `owl:Restriction` sobre classes ArchiMate. O outro eixo, `org:primaryDimension`, já está no grafo: a matriz tem hoje um eixo dentro e o outro fora, e nenhuma consulta que cruze os dois funciona."
+      },
+      "org:What": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Vocabulário do eixo de perspectiva da matriz 6x6, especificado normativamente com axiomas `owl:Restriction` sobre classes ArchiMate. O outro eixo, `org:primaryDimension`, já está no grafo: a matriz tem hoje um eixo dentro e o outro fora, e nenhuma consulta que cruze os dois funciona."
+      },
+      "org:Who": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Vocabulário do eixo de perspectiva da matriz 6x6, especificado normativamente com axiomas `owl:Restriction` sobre classes ArchiMate. O outro eixo, `org:primaryDimension`, já está no grafo: a matriz tem hoje um eixo dentro e o outro fora, e nenhuma consulta que cruze os dois funciona."
+      },
+      "org:When": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Vocabulário do eixo de perspectiva da matriz 6x6, especificado normativamente com axiomas `owl:Restriction` sobre classes ArchiMate. O outro eixo, `org:primaryDimension`, já está no grafo: a matriz tem hoje um eixo dentro e o outro fora, e nenhuma consulta que cruze os dois funciona."
+      },
+      "org:Where": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Vocabulário do eixo de perspectiva da matriz 6x6, especificado normativamente com axiomas `owl:Restriction` sobre classes ArchiMate. O outro eixo, `org:primaryDimension`, já está no grafo: a matriz tem hoje um eixo dentro e o outro fora, e nenhuma consulta que cruze os dois funciona."
+      },
+      "org:Why": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Vocabulário do eixo de perspectiva da matriz 6x6, especificado normativamente com axiomas `owl:Restriction` sobre classes ArchiMate. O outro eixo, `org:primaryDimension`, já está no grafo: a matriz tem hoje um eixo dentro e o outro fora, e nenhuma consulta que cruze os dois funciona."
+      },
+      "org:How": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Vocabulário do eixo de perspectiva da matriz 6x6, especificado normativamente com axiomas `owl:Restriction` sobre classes ArchiMate. O outro eixo, `org:primaryDimension`, já está no grafo: a matriz tem hoje um eixo dentro e o outro fora, e nenhuma consulta que cruze os dois funciona."
+      },
+      "org:MatrixCell": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Vocabulário de saída do CONSTRUCT que materializa as células do viewpoint 6x6. Decisão de 2026-08-19: declarar no TBox, para que o resultado da consulta tenha contrato verificável, coerente com a Seção 2.3 da Arquitetura, que trata regra sem verificação mecânica como regra que não governa. Custo aceito: quatro termos que nenhuma tripla asserida usa hoje."
+      },
+      "org:dimension": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Vocabulário de saída do CONSTRUCT que materializa as células do viewpoint 6x6. Decisão de 2026-08-19: declarar no TBox, para que o resultado da consulta tenha contrato verificável, coerente com a Seção 2.3 da Arquitetura, que trata regra sem verificação mecânica como regra que não governa. Custo aceito: quatro termos que nenhuma tripla asserida usa hoje."
+      },
+      "org:perspective": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Vocabulário de saída do CONSTRUCT que materializa as células do viewpoint 6x6. Decisão de 2026-08-19: declarar no TBox, para que o resultado da consulta tenha contrato verificável, coerente com a Seção 2.3 da Arquitetura, que trata regra sem verificação mecânica como regra que não governa. Custo aceito: quatro termos que nenhuma tripla asserida usa hoje."
+      },
+      "org:contains": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Vocabulário de saída do CONSTRUCT que materializa as células do viewpoint 6x6. Decisão de 2026-08-19: declarar no TBox, para que o resultado da consulta tenha contrato verificável, coerente com a Seção 2.3 da Arquitetura, que trata regra sem verificação mecânica como regra que não governa. Custo aceito: quatro termos que nenhuma tripla asserida usa hoje."
+      },
+      "ref:MaturityModel": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Peça 8.1.2 da Arquitetura, modelos de maturidade canônicos e seu domínio de escopo, já declarada não extraída no Checklist da Seção 2 do Registro com alvo S06. A triagem apenas confirma por identificador o que o Checklist afirma por seção."
+      },
+      "ref:scopeDomain": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Peça 8.1.2 da Arquitetura, modelos de maturidade canônicos e seu domínio de escopo, já declarada não extraída no Checklist da Seção 2 do Registro com alvo S06. A triagem apenas confirma por identificador o que o Checklist afirma por seção."
+      },
+      "ref:assessedByModel": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Peça 8.1.2 da Arquitetura, modelos de maturidade canônicos e seu domínio de escopo, já declarada não extraída no Checklist da Seção 2 do Registro com alvo S06. A triagem apenas confirma por identificador o que o Checklist afirma por seção."
+      },
+      "ref:BPM_MM": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Peça 8.1.2 da Arquitetura, modelos de maturidade canônicos e seu domínio de escopo, já declarada não extraída no Checklist da Seção 2 do Registro com alvo S06. A triagem apenas confirma por identificador o que o Checklist afirma por seção."
+      },
+      "ref:P3M3": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Peça 8.1.2 da Arquitetura, modelos de maturidade canônicos e seu domínio de escopo, já declarada não extraída no Checklist da Seção 2 do Registro com alvo S06. A triagem apenas confirma por identificador o que o Checklist afirma por seção."
+      },
+      "ref:CMMI_DEV": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Peça 8.1.2 da Arquitetura, modelos de maturidade canônicos e seu domínio de escopo, já declarada não extraída no Checklist da Seção 2 do Registro com alvo S06. A triagem apenas confirma por identificador o que o Checklist afirma por seção."
+      },
+      "ref:GeneralCMMI": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Peça 8.1.2 da Arquitetura, modelos de maturidade canônicos e seu domínio de escopo, já declarada não extraída no Checklist da Seção 2 do Registro com alvo S06. A triagem apenas confirma por identificador o que o Checklist afirma por seção."
+      },
+      "ref:OperationalProcess": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Peça 8.1.2 da Arquitetura, modelos de maturidade canônicos e seu domínio de escopo, já declarada não extraída no Checklist da Seção 2 do Registro com alvo S06. A triagem apenas confirma por identificador o que o Checklist afirma por seção."
+      },
+      "ref:ProjectPortfolio": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Peça 8.1.2 da Arquitetura, modelos de maturidade canônicos e seu domínio de escopo, já declarada não extraída no Checklist da Seção 2 do Registro com alvo S06. A triagem apenas confirma por identificador o que o Checklist afirma por seção."
+      },
+      "ref:SoftwareEngineering": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Peça 8.1.2 da Arquitetura, modelos de maturidade canônicos e seu domínio de escopo, já declarada não extraída no Checklist da Seção 2 do Registro com alvo S06. A triagem apenas confirma por identificador o que o Checklist afirma por seção."
+      },
+      "ref:GeneralPurpose": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Peça 8.1.2 da Arquitetura, modelos de maturidade canônicos e seu domínio de escopo, já declarada não extraída no Checklist da Seção 2 do Registro com alvo S06. A triagem apenas confirma por identificador o que o Checklist afirma por seção."
+      },
+      "ref:MaturityCriterion": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Peça 8.1.3 da Arquitetura, o critério observável por nível, declarada no Checklist da Seção 2 como a peça de maior consequência entre as ausentes, porque é o que permite atribuir nível a partir de evidência do cliente. Motivo direto da reordenação do ADR-002."
+      },
+      "ref:partOfModel": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Peça 8.1.3 da Arquitetura, o critério observável por nível, declarada no Checklist da Seção 2 como a peça de maior consequência entre as ausentes, porque é o que permite atribuir nível a partir de evidência do cliente. Motivo direto da reordenação do ADR-002."
+      },
+      "ref:atLevel": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Peça 8.1.3 da Arquitetura, o critério observável por nível, declarada no Checklist da Seção 2 como a peça de maior consequência entre as ausentes, porque é o que permite atribuir nível a partir de evidência do cliente. Motivo direto da reordenação do ADR-002."
+      },
+      "ref:evidenceDescription": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Peça 8.1.3 da Arquitetura, o critério observável por nível, declarada no Checklist da Seção 2 como a peça de maior consequência entre as ausentes, porque é o que permite atribuir nível a partir de evidência do cliente. Motivo direto da reordenação do ADR-002."
+      },
+      "ref:RouteCapabilityToMaturityModel": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Peça 8.1.4 da Arquitetura, roteamento de capability para modelo de maturidade por dimensão primária, com as duas propriedades que a regra usa. Declarada não extraída no Checklist da Seção 2 com alvo S06."
+      },
+      "ref:subDomain": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Peça 8.1.4 da Arquitetura, roteamento de capability para modelo de maturidade por dimensão primária, com as duas propriedades que a regra usa. Declarada não extraída no Checklist da Seção 2 com alvo S06."
+      },
+      "ref:IT": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Peça 8.1.4 da Arquitetura, roteamento de capability para modelo de maturidade por dimensão primária, com as duas propriedades que a regra usa. Declarada não extraída no Checklist da Seção 2 com alvo S06."
+      },
+      "ref:precedesFramework": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S06",
+        "fundamento": "Propriedade de precedência entre frameworks, declarada manualmente pelo consultor e independente das regras de roteamento do 8.8.2, que estão adiadas pelo item 7 do Registro."
+      },
+      "ref:currentValue": {
+        "estado": "lacuna_real",
+        "pacote_alvo": "S05",
+        "fundamento": "`ref:KPI`, `ref:Threshold`, `ref:hasThreshold` e `ref:greenUpperBound` já estão no grafo; falta a propriedade que carrega a leitura corrente, sem a qual não há valor a comparar com o limiar. Alvo S05 por depender do plano modelado."
+      },
+      "org:DimensaoGerencial": {
+        "estado": "mencao_rejeitada_ou_candidata",
+        "fundamento": "Variante em português de `org:ManagementDimension`, que está no grafo e é objeto do item 1 do Registro; aparece uma única vez, em prosa, como exemplo de tipo de extensão permitido. Nota para o S07: a Arquitetura usa duas grafias para o mesmo conceito."
+      },
+      "ref:targetMaturityLevel": {
+        "estado": "mencao_rejeitada_ou_candidata",
+        "fundamento": "Variante de prefixo de `org:targetMaturityLevel`, que está declarada no grafo. Segunda ocorrência do mesmo padrão de divergência de nomenclatura, depois de `org:DimensaoGerencial`; entra na lista de correção do S07."
+      },
+      "ref:ChangeRole": {
+        "estado": "mencao_rejeitada_ou_candidata",
+        "fundamento": "Citado pela Arquitetura como a classe paralela que ela rejeita, em favor de herdar `archimate:BusinessRole` e preservar a integração com o tripé de realização da 8.10 e com as regras SHACL existentes sobre papéis."
+      },
+      "ref:BodyOfKnowledge": {
+        "estado": "mencao_rejeitada_ou_candidata",
+        "fundamento": "Candidato declarado a sétima ou oitava subclasse por natureza, para compilações autoritativas; a própria Arquitetura condiciona a adição ao workflow de RFC ontológica da 12.3."
+      },
+      "ref:Regulation": {
+        "estado": "mencao_rejeitada_ou_candidata",
+        "fundamento": "Candidato declarado a sétima ou oitava subclasse por natureza, para instrumentos legais com força jurídica, sob o mesmo condicionamento ao RFC ontológico da 12.3."
+      },
+      "ref:RR_VariabilityToDMAIC": {
+        "estado": "fora_de_escopo_por_decisao",
+        "fundamento": "Regras de roteamento gap para framework da 8.8.2, cuja não extração é decisão registrada no item 7 do Registro desde 2026-07-20, com fundamento de que o mapeamento deve nascer validado contra metodologia real e não contra os três exemplos ilustrativos do documento. O gatilho de revisão é o do item 7."
+      },
+      "ref:RR_AdaptabilityToScrum": {
+        "estado": "fora_de_escopo_por_decisao",
+        "fundamento": "Regras de roteamento gap para framework da 8.8.2, cuja não extração é decisão registrada no item 7 do Registro desde 2026-07-20, com fundamento de que o mapeamento deve nascer validado contra metodologia real e não contra os três exemplos ilustrativos do documento. O gatilho de revisão é o do item 7."
+      },
+      "ref:RR_StrategyGapToOKR": {
+        "estado": "fora_de_escopo_por_decisao",
+        "fundamento": "Regras de roteamento gap para framework da 8.8.2, cuja não extração é decisão registrada no item 7 do Registro desde 2026-07-20, com fundamento de que o mapeamento deve nascer validado contra metodologia real e não contra os três exemplos ilustrativos do documento. O gatilho de revisão é o do item 7."
+      },
+      "ref:recommendedFramework": {
+        "estado": "fora_de_escopo_por_decisao",
+        "fundamento": "Propriedade produzida pelas regras da 8.8.2, adiadas pelo item 7 do Registro; declarar a saída sem o produtor não agrega. Mesmo gatilho do item 7."
+      },
+      "ref:Tenant": {
+        "estado": "fora_de_escopo_por_decisao",
+        "fundamento": "Multi-tenancy real declarada fora do escopo do MVP pelo ADR-002 D9. Gatilho: a decisão de escopo do piloto do M4, onde a tensão entre este corte e a tese de amortização da 3.4 será resolvida."
+      },
+      "org:belongsToTenant": {
+        "estado": "fora_de_escopo_por_decisao",
+        "fundamento": "Multi-tenancy real declarada fora do escopo do MVP pelo ADR-002 D9. Gatilho: a decisão de escopo do piloto do M4, onde a tensão entre este corte e a tese de amortização da 3.4 será resolvida."
+      }
+    }
   },
 
   "correspondencia": [
